@@ -1,0 +1,56 @@
+name: relation_app_teaching
+description: "社交技能分级教学与模拟对话练习 App"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  flutter_markdown: ^0.7.4+3
+  # PDF 导出：HTML→PDF（自动使用系统 WebView 渲染中文，无需额外字体）
+  printing: ^5.14.2
+  # printing 依赖 pdf，显式声明以避免 depend_on_referenced_packages
+  pdf: ^3.11.1
+  # 获取临时目录/应用文档目录，用于保存 PDF 文件
+  path_provider: ^2.1.5
+  # 分享/另存为：跨平台的系统分享面板
+  share_plus: ^10.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/pdf/
+    - assets/markdown/
+
+# APP 图标生成配置
+# 使用：dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  image_path_android: "assets/icons/app_icon.png"
+  adaptive_icon_background: "#EAF2FB"
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
+  min_sdk_android: 21
+
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    background_color: "#EAF2FB"
+    theme_color: "#4A90D9"
+
+  windows:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    icon_size: 48

@@ -1,0 +1,35 @@
+{
+    "name": "社交教练",
+    "short_name": "社交教练",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#EAF2FB",
+    "theme_color": "#4A90D9",
+    "description": "社交技能分级教学与模拟对话练习",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
