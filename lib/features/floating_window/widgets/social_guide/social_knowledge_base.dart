@@ -5,8 +5,9 @@
 library social_knowledge_base_widget;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'teaching_level_system.dart';
+import 'knowledge_extensions.dart';
+import 'knowledge_detail_page.dart';
 
 // ============================================================================
 // 社交知识词典浏览 Widget
@@ -178,165 +179,236 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
     );
   }
 
+  void _openDetail(SocialKnowledgeEntry entry) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => KnowledgeDetailPage(entry: entry),
+      ),
+    );
+  }
+
   Widget _buildEntryCard(SocialKnowledgeEntry entry, ColorScheme cs) {
     final hasLevel = entry.relatedLevel > 0 && entry.relatedLevel <= 10;
     final level = hasLevel ? LevelRegistry.getLevel(entry.relatedLevel) : null;
     final catColor = _getCategoryColor(entry.category, cs);
+    final ext = KnowledgeExtensionRegistry.getBundle(entry.id);
+    final hasPractice = ext.practices.isNotEmpty;
+    final hasTest = ext.questions.isNotEmpty;
+    final hasExtract = ext.keyPoints.isNotEmpty;
 
     return Card(
       elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         side: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.5)),
       ),
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-        childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
-        shape: const Border(),
-        collapsedShape: const Border(),
-        leading: Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: catColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _openDetail(entry),
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 左侧分类图标
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: catColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    _getCategoryIcon(entry.category),
+                    size: 20,
+                    color: catColor,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 中间文字区
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 标题
+                      Text(
+                        entry.title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      // 标签行
+                      Wrap(
+                        spacing: 5,
+                        runSpacing: 4,
+                        children: [
+                          if (hasLevel)
+                            _miniChip(
+                              'Lv${entry.relatedLevel} ${level!.title}',
+                              cs.primary.withValues(alpha: 0.1),
+                              cs.primary,
+                            )
+                          else
+                            _miniChip(
+                              entry.category,
+                              catColor.withValues(alpha: 0.1),
+                              catColor,
+                            ),
+                          ...entry.tags.take(2).map(
+                            (tag) => _miniChip(
+                              '#$tag',
+                              cs.surfaceContainerHighest.withValues(alpha: 0.6),
+                              cs.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // 内容预览
+                      Text(
+                        _preview(entry.content),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: cs.onSurfaceVariant.withValues(alpha: 0.85),
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // 三个功能入口徽章
+                      Row(
+                        children: [
+                          _featureBadge(
+                            icon: Icons.flash_on_rounded,
+                            label: '练习',
+                            count: ext.practices.length,
+                            activeColor: Colors.green,
+                            active: hasPractice,
+                            cs: cs,
+                          ),
+                          const SizedBox(width: 6),
+                          _featureBadge(
+                            icon: Icons.quiz_rounded,
+                            label: '测试',
+                            count: ext.questions.length,
+                            activeColor: Colors.orange,
+                            active: hasTest,
+                            cs: cs,
+                          ),
+                          const SizedBox(width: 6),
+                          _featureBadge(
+                            icon: Icons.lightbulb_rounded,
+                            label: '提炼',
+                            count: ext.keyPoints.length,
+                            activeColor: catColor,
+                            active: hasExtract,
+                            cs: cs,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                // 右箭头
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    size: 20,
+                    color: cs.onSurfaceVariant.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Icon(
-            _getCategoryIcon(entry.category),
-            size: 18,
-            color: catColor,
-          ),
         ),
-        title: Text(
-          entry.title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+
+  Widget _miniChip(String label, Color bg, Color fg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          color: fg,
+          fontWeight: FontWeight.w600,
         ),
-        subtitle: Row(
-          children: [
-            if (hasLevel) ...[
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                decoration: BoxDecoration(
-                  color: cs.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  'Lv${entry.relatedLevel} ${level!.title}',
-                  style: TextStyle(fontSize: 10, color: cs.primary),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ] else ...[
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                decoration: BoxDecoration(
-                  color: catColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  entry.category,
-                  style: TextStyle(fontSize: 10, color: catColor, fontWeight: FontWeight.w600),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
-            ...entry.tags.take(2).map((tag) => Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: Text(
-                '#$tag',
-                style: TextStyle(fontSize: 10, color: cs.onSurfaceVariant.withValues(alpha: 0.6)),
-              ),
-            )),
-          ],
+      ),
+    );
+  }
+
+  Widget _featureBadge({
+    required IconData icon,
+    required String label,
+    required int count,
+    required Color activeColor,
+    required bool active,
+    required ColorScheme cs,
+  }) {
+    final color = active ? activeColor : cs.onSurfaceVariant.withValues(alpha: 0.5);
+    final bg = active ? activeColor.withValues(alpha: 0.1) : cs.surfaceContainerHighest.withValues(alpha: 0.5);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: color.withValues(alpha: active ? 0.35 : 0.15),
         ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Divider(),
-          _buildMarkdownContent(entry.content, cs),
+          Icon(icon, size: 11, color: color),
+          const SizedBox(width: 3),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 3),
+          Text(
+            count > 0 ? '×$count' : '—',
+            style: TextStyle(
+              fontSize: 9.5,
+              color: color.withValues(alpha: active ? 1 : 0.6),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMarkdownContent(String content, ColorScheme cs) {
-    return MarkdownBody(
-      data: content,
-      selectable: true,
-      styleSheet: MarkdownStyleSheet(
-        p: TextStyle(
-          fontSize: 13,
-          color: cs.onSurface,
-          height: 1.65,
-        ),
-        h1: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: cs.onSurface,
-        ),
-        h2: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          color: cs.onSurface,
-        ),
-        h3: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: cs.onSurface,
-        ),
-        h4: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: cs.onSurface,
-        ),
-        strong: TextStyle(
-          fontWeight: FontWeight.w700,
-          color: cs.onSurface,
-        ),
-        em: TextStyle(
-          fontStyle: FontStyle.italic,
-          color: cs.onSurface,
-        ),
-        code: TextStyle(
-          fontSize: 12,
-          backgroundColor: cs.surfaceContainerHighest,
-          color: cs.primary,
-        ),
-        codeblockDecoration: BoxDecoration(
-          color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        blockquoteDecoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(color: cs.primary.withValues(alpha: 0.3), width: 3),
-          ),
-        ),
-        blockquotePadding: const EdgeInsets.fromLTRB(12, 4, 8, 4),
-        horizontalRuleDecoration: BoxDecoration(
-          border: Border(top: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.5))),
-        ),
-        tableHead: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: cs.onSurface,
-        ),
-        tableBody: TextStyle(
-          fontSize: 13,
-          color: cs.onSurface,
-        ),
-        tableBorder: TableBorder(
-          horizontalInside: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.3)),
-          bottom: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.3)),
-        ),
-        a: TextStyle(
-          color: cs.primary,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      onTapLink: (text, href, title) {
-        if (href != null) {
-          // 可以使用 url_launcher 打开链接
-        }
-      },
-    );
+  String _preview(String content) {
+    var text = content
+        .replaceAll('\n', ' ')
+        .replaceAll('【', ' ')
+        .replaceAll('】', ' ')
+        .replaceAll(RegExp(r'#+'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    if (text.length > 60) text = '${text.substring(0, 60)}...';
+    return text;
   }
 
   Color _getCategoryColor(String category, ColorScheme cs) {
