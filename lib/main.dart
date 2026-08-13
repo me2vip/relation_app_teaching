@@ -52,9 +52,14 @@ class TeachingHomePage extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            tooltip: '导出完整知识手册 PDF',
-            icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: '导出知识手册',
+            icon: const Icon(Icons.ios_share_rounded),
             onPressed: () => PdfExporter.export(context),
+          ),
+          IconButton(
+            tooltip: '关于',
+            icon: const Icon(Icons.info_outline_rounded),
+            onPressed: () => _showAboutDialog(context),
           ),
           const SizedBox(width: 4),
         ],
@@ -66,6 +71,44 @@ class TeachingHomePage extends StatelessWidget {
           contactGender: '未设置',
         ),
       ),
+    );
+  }
+
+  /// 关于页面
+  static void _showAboutDialog(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: '社交教练',
+      applicationVersion: '1.0.0',
+      applicationLegalese: '© 2026 社交教练',
+      applicationIcon: const FlutterLogo(),
+      children: [
+        const SizedBox(height: 16),
+        const Text(
+          '社交技能分级教学与模拟对话练习 App',
+          style: TextStyle(fontSize: 13),
+        ),
+        const SizedBox(height: 12),
+        const Divider(),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            const Icon(Icons.person_outline_rounded, size: 18, color: Colors.grey),
+            const SizedBox(width: 8),
+            Text('作者：zw',
+                style: TextStyle(fontSize: 13, color: Colors.grey[800])),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            const Icon(Icons.chat_bubble_outline_rounded, size: 18, color: Colors.grey),
+            const SizedBox(width: 8),
+            Text('QQ：3125075915',
+                style: TextStyle(fontSize: 13, color: Colors.grey[800])),
+          ],
+        ),
+      ],
     );
   }
 }
