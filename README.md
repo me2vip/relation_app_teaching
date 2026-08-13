@@ -11,6 +11,19 @@
 - **导出知识手册**：支持导出 PDF 和 Markdown，可在其他对话 AI 中直接使用内置提示词进行练习和考核
 - **关于页面**：作者信息
 
+## 截图
+
+<p align="center">
+  <img src="screenshots/home_screen.png" alt="首页-关卡列表" width="200"/>
+  <img src="screenshots/knowledge_list.png" alt="知识词典列表" width="200"/>
+  <img src="screenshots/knowledge_detail.png" alt="知识词典详情" width="200"/>
+</p>
+
+<p align="center">
+  <img src="screenshots/dialogue_practice.png" alt="对话练习界面" width="200"/>
+  <img src="screenshots/quick_practice.png" alt="快速练习界面" width="200"/>
+</p>
+
 ## 技术栈
 
 - Flutter / Dart
