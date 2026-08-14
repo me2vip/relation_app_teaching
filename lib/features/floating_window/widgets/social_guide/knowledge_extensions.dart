@@ -3,6 +3,8 @@ library knowledge_extensions;
 
 import 'package:flutter/material.dart';
 import 'teaching_level_system.dart';
+import 'knowledge_extensions_part1.dart';
+import 'knowledge_extensions_part2.dart';
 
 // ============================================================================
 // 知识点提炼：核心要点数据模型
@@ -73,7 +75,41 @@ class KnowledgeQuestion {
 }
 
 // ============================================================================
-// 知识点完整扩展：为每个知识点绑定提炼/练习/测试
+// 分步骤指导：将知识点拆解为可操作的步骤
+// ============================================================================
+
+class KnowledgeGuideStep {
+  final String title;           // 步骤标题
+  final String instruction;     // 指导说明（做什么、为什么）
+  final String example;         // 示范话术 / 示范动作
+  final String tip;             // 注意事项 / 常见错误
+  final List<String> keywords;  // 本步骤关键词
+
+  const KnowledgeGuideStep({
+    required this.title,
+    required this.instruction,
+    required this.example,
+    this.tip = '',
+    this.keywords = const [],
+  });
+}
+
+class KnowledgeStepGuide {
+  final String id;
+  final String title;                        // 指导主题
+  final String scenario;                     // 适用场景描述
+  final List<KnowledgeGuideStep> steps;      // 分步骤
+
+  const KnowledgeStepGuide({
+    required this.id,
+    required this.title,
+    required this.scenario,
+    required this.steps,
+  });
+}
+
+// ============================================================================
+// 知识点完整扩展：为每个知识点绑定提炼/练习/测试/分步指导
 // ============================================================================
 
 class KnowledgeExtensionBundle {
@@ -81,12 +117,14 @@ class KnowledgeExtensionBundle {
   final List<KnowledgeKeyPoint> keyPoints;     // 核心要点提炼
   final List<KnowledgePractice> practices;     // 情景练习题
   final List<KnowledgeQuestion> questions;     // 测试题
+  final List<KnowledgeStepGuide> stepGuides;   // 分步骤指导
 
   const KnowledgeExtensionBundle({
     required this.knowledgeId,
     required this.keyPoints,
     required this.practices,
     required this.questions,
+    this.stepGuides = const [],
   });
 }
 
@@ -505,7 +543,12 @@ class KnowledgeExtensionRegistry {
   // ====================================================================
 
   /// 获取指定知识点的扩展数据，不存在则返回默认空扩展
+  /// 查找优先级：Part1/Part2 扩展数据 → 原始内联数据 → 自动生成
   static KnowledgeExtensionBundle getBundle(String knowledgeId) {
+    // 优先查找 Part1/Part2 扩展数据（覆盖全部 48 个知识点）
+    final expanded = knowledgePart1Bundles[knowledgeId] ?? knowledgePart2Bundles[knowledgeId];
+    if (expanded != null) return expanded;
+    // 回退到原始内联数据
     return _bundles[knowledgeId] ?? KnowledgeExtensionBundle(
       knowledgeId: knowledgeId,
       keyPoints: _generateDefaultKeyPoints(knowledgeId),
@@ -515,7 +558,10 @@ class KnowledgeExtensionRegistry {
   }
 
   /// 是否存在指定知识点的扩展数据
-  static bool hasBundle(String knowledgeId) => _bundles.containsKey(knowledgeId);
+  static bool hasBundle(String knowledgeId) =>
+      knowledgePart1Bundles.containsKey(knowledgeId) ||
+      knowledgePart2Bundles.containsKey(knowledgeId) ||
+      _bundles.containsKey(knowledgeId);
 
   /// 通用核心要点生成（当知识点暂无人工编写扩展时使用）
   static List<KnowledgeKeyPoint> _generateDefaultKeyPoints(String knowledgeId) {

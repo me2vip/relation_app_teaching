@@ -300,6 +300,15 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
                           Row(
                             children: [
                               _featureBadge(
+                                icon: Icons.school_rounded,
+                                label: '指导',
+                                count: ext.stepGuides.length,
+                                activeColor: Colors.blue,
+                                active: ext.stepGuides.isNotEmpty,
+                                cs: cs,
+                              ),
+                              const SizedBox(width: 6),
+                              _featureBadge(
                                 icon: Icons.flash_on_rounded,
                                 label: '练习',
                                 count: ext.practices.length,
@@ -418,10 +427,22 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
               ...ext.keyPoints.map((kp) => _buildKeyPointItem(kp, cs, catColor)),
             ],
 
-            // 3) 三个功能入口按钮
+            // 3) 四个功能入口按钮（两行）
             const SizedBox(height: 14),
             Row(
               children: [
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.school_rounded,
+                    label: '分步指导',
+                    subLabel: ext.stepGuides.isEmpty ? '暂无' : '${ext.stepGuides.length} 个指导',
+                    color: Colors.blue,
+                    enabled: ext.stepGuides.isNotEmpty,
+                    onTap: () => _goToPractice(entry, ext),
+                    cs: cs,
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.flash_on_rounded,
@@ -433,7 +454,11 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
                     cs: cs,
                   ),
                 ),
-                const SizedBox(width: 8),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
                 Expanded(
                   child: _buildActionButton(
                     icon: Icons.quiz_rounded,
