@@ -193,7 +193,9 @@ class AppUpdateService {
           tagName.toLowerCase().startsWith('v') ? tagName.substring(1) : tagName;
 
       // 找 APK 资产
-      final assets = (data['assets'] as List?) ?? <dynamic>[]>;
+      final assets = data['assets'] is List
+          ? (data['assets'] as List)
+          : <dynamic>[];
       String apkUrl = '';
       String apkName = '';
       int apkSize = 0;
