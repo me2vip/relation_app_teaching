@@ -3,11 +3,11 @@
 /// 通过 GitHub Release API 检查最新版本，下载 APK 后调用系统安装器安装。
 ///
 /// 工作流程：
-///   1. [checkForUpdate]：调用 GitHub `releases/latest` 接口，比对版本号
+///   1. [checkForUpdate]：调用 GitHub `releases` 列表接口，比对版本号
 ///   2. [downloadApk]：流式下载 APK 到外部存储，支持进度回调
 ///   3. [installApk]：调用 [OpenFilex] 拉起系统安装器（Android 8+ 自动处理未知来源权限）
 ///
-/// GitHub API 文档：https://docs.github.com/en/rest/releases/releases#get-the-latest-release
+/// GitHub API 文档：https://docs.github.com/en/rest/releases/releases#list-releases
 library app_update_service;
 
 import 'dart:io';
@@ -97,9 +97,15 @@ class AppUpdateService {
   static const _repoOwner = 'me2vip';
   static const _repoName = 'relation_app_teaching';
 
-  /// GitHub Release 最新版 API
-  static const _apiLatestRelease =
-      'https://api.github.com/repos/$_repoOwner/$_repoName/releases/latest';
+  /// GitHub Release 列表 API
+  ///
+  /// 注意：**[不要用 `releases/latest` 端点]**。
+  /// `/releases/latest` 会**排除 prerelease（预发布）与 draft**，
+  /// 一旦最新版本被标记为预发布，该端点会回退到上一个旧的正式版，
+  /// 导致自动更新下载并安装**旧版 APK**（本仓库出现过的 bug）。
+  /// 这里改为拉取列表，过滤 draft 后按发布时间取真正最新的版本（含预发布）。
+  static const _apiReleases =
+      'https://api.github.com/repos/$_repoOwner/$_repoName/releases?per_page=100';
 
   /// Release HTML 页面（备用：浏览器下载）
   static const _releasePageUrl =
@@ -135,7 +141,7 @@ class AppUpdateService {
 
     final dio = _createDio();
     try {
-      final resp = await dio.get(_apiLatestRelease);
+      final resp = await dio.get(_apiReleases);
       if (resp.statusCode != 200) {
         return UpdateCheckOutcome(
           result: UpdateCheckResult.error,
@@ -143,9 +149,38 @@ class AppUpdateService {
           currentVersion: currentVersion,
         );
       }
-      final data = resp.data is Map<String, dynamic>
-          ? resp.data as Map<String, dynamic>
-          : <String, dynamic>{};
+
+      final list = (resp.data is List) ? (resp.data as List) : <dynamic>[];
+
+      // 过滤草稿（draft）。
+      // 修复（自动更新下载旧版 bug）：不再使用 `releases/latest` 端点，
+      // 因为它会排除 prerelease，导致新版本被标记为预发布时自动更新
+      // 回退下载旧版安装。改为取时间上最新的、非草稿 Release（含预发布）。
+      final releases = <Map<String, dynamic>>[];
+      for (final item in list) {
+        if (item is! Map<String, dynamic>) continue;
+        if (item['draft'] == true) continue;
+        releases.add(item);
+      }
+      if (releases.isEmpty) {
+        return UpdateCheckOutcome(
+          result: UpdateCheckResult.error,
+          errorMessage: '未找到可用的 Release',
+          currentVersion: currentVersion,
+        );
+      }
+
+      // 按发布时间降序，取真正最新的版本（无论是否 prerelease）
+      releases.sort((a, b) {
+        final ta = DateTime.tryParse((a['published_at'] ?? '').toString()) ??
+            DateTime(1970);
+        final tb = DateTime.tryParse((b['published_at'] ?? '').toString()) ??
+            DateTime(1970);
+        return tb.compareTo(ta); // 降序，最新在前
+      });
+
+      final data = releases.first;
+
       final tagName = (data['tag_name'] ?? '').toString().trim();
       if (tagName.isEmpty) {
         return UpdateCheckOutcome(
