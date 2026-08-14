@@ -539,6 +539,387 @@ class KnowledgeExtensionRegistry {
         ),
       ],
     ),
+
+    // ==================================================================
+    // K080 - 如何脱单：从单身到恋爱的系统方法
+    // ==================================================================
+    'K080': KnowledgeExtensionBundle(
+      knowledgeId: 'K080',
+      keyPoints: [
+        KnowledgeKeyPoint(
+          title: '可被喜欢的状态',
+          content: '生活有内容、外形有底线、情绪稳定、动态有温度——先把"自己"调到值得被爱，再去扩大接触面。',
+          icon: Icons.favorite_rounded,
+          importance: '核心',
+        ),
+        KnowledgeKeyPoint(
+          title: '系统扩大社交半径',
+          content: '线下（兴趣班/聚会/沙龙/志愿）+ 线上（交友APP/兴趣社区/校友群）。去"有共同语境"的场合，共同兴趣是最好的破冰借口。',
+          icon: Icons.people_rounded,
+          importance: '核心',
+        ),
+        KnowledgeKeyPoint(
+          title: '从认识到关系',
+          content: '三次法则（三次正向互动才真正开始）+ 主动但不舔 + 轻量投入（让对方为你做小事）+ 抓住暧昧窗口推一把。',
+          icon: Icons.favorite_outline_rounded,
+          importance: '重要',
+        ),
+        KnowledgeKeyPoint(
+          title: '三大误区',
+          content: '❌等缘分（概率永远0） ❌只看颜值条件 ❌舔狗式追求（单方面付出只让对方更不珍惜）。',
+          icon: Icons.error_outline_rounded,
+          importance: '重要',
+        ),
+      ],
+      practices: [
+        KnowledgePractice(
+          id: 'K080-P1',
+          scenario: '你在健身房的固定时间总能遇到同一个人，已经点头之交。今天你想把"认识"往前推一步。',
+          contactPersona: '同健身房的人，礼貌但互不了解，对你印象中性偏好',
+          openingMessage: '（对方刚练完，擦着汗和你点头）哟，今天也来啦。',
+          goodKeywords: ['一起', '组', '约', '最近', '动作', '请教', '你呢'],
+          referenceReply: '哈哈对，今天也来了。我看你硬拉动作特别标准，我总觉得腰发力不对，能不能请教你两下？',
+          tip: '从共同场景切入，用"请教"制造轻量互动，比直接要微信自然得多。',
+        ),
+        KnowledgePractice(
+          id: 'K080-P2',
+          scenario: '你和一个聊了两周、感觉不错的异性约了第一次咖啡。聊得不错，你想在临走前推进关系，但不想显得急切。',
+          contactPersona: '对你有好感但还在观察期的异性，聊天积极、会主动分享',
+          openingMessage: '（喝完咖啡，对方看了眼时间）今天聊得挺开心的，时间过得真快。',
+          goodKeywords: ['下次', '一起', '喜欢', '推荐', '想去', '约', '再'],
+          referenceReply: '我也是！对了，你上次说那家手冲店，我超想去——下次换我请你，顺便带你去？',
+          tip: '抓住暧昧窗口用"下次+具体邀约"推一把，把模糊好感落成下一次见面，而不是停留在"聊得开心"。',
+        ),
+      ],
+      questions: [
+        KnowledgeQuestion(
+          id: 'K080-Q1',
+          type: QuestionType.trueFalse,
+          question: '长期单身的人只要"等缘分"、不出门不主动，总有一天会遇到的。',
+          options: ['正确', '错误'],
+          correctIndices: [1],
+          explanation: '正确答案：错误。脱单是概率游戏，不出门、不加群、不主动，接触面永远是0，缘分无从降临。',
+          difficulty: 1,
+        ),
+        KnowledgeQuestion(
+          id: 'K080-Q2',
+          type: QuestionType.singleChoice,
+          question: '下列哪项是"主动但不舔"的正确做法？',
+          options: [
+            '对方不回消息就连续发十几条追问',
+            '主动邀约、主动关心，但也保持自己的生活节奏',
+            '对方发一条你秒回十条，全程围着对方转',
+            '为对方无条件付出金钱和时间以表诚意',
+          ],
+          correctIndices: [1],
+          explanation: '正确答案是2。主动邀约和关心没问题，但秒回、围着他转、单方面无限付出（舔狗式）只会让对方更不珍惜。',
+          difficulty: 2,
+        ),
+        KnowledgeQuestion(
+          id: 'K080-Q3',
+          type: QuestionType.multipleChoice,
+          question: '脱单系统工程的三个核心支柱包括？（多选）',
+          options: [
+            '把自己调到可被喜欢的状态',
+            '系统扩大社交半径',
+            '长期宅家等被遇见',
+            '把认识变成关系（推进行动力）',
+          ],
+          correctIndices: [0, 1, 3],
+          explanation: '正确答案是1、2、4。脱单=可被喜欢的状态 × 足够大的社交半径 × 敢于推进的行动力；"宅家等被遇见"是最大误区。',
+          difficulty: 2,
+        ),
+      ],
+      stepGuides: [
+        KnowledgeStepGuide(
+          id: 'K080-G1',
+          title: '脱单三步执行流程',
+          scenario: '从"想脱单"到"进入一段关系"的系统推进',
+          steps: [
+            KnowledgeGuideStep(
+              title: '第一步：调状态',
+              instruction: '先把生活填满、外形收拾干净、情绪稳住，并偶尔分享有温度的生活动态，让别人有切入点。',
+              example: '这周约一次运动/兴趣活动，发一条不炫耀的真实动态。',
+              tip: '怨气重、负能量爆棚、把单身当受害者叙事，是最劝退的状态。',
+              keywords: ['生活内容', '外形底线', '情绪稳定'],
+            ),
+            KnowledgeGuideStep(
+              title: '第二步：扩半径',
+              instruction: '按"有共同语境"原则选场合：兴趣班、朋友聚会、行业沙龙、靠谱交友APP、兴趣社区。',
+              example: '让朋友带朋友组局，或报名一个连续性的线下兴趣班。',
+              tip: '去有共同兴趣的场合，共同语境是最好的破冰借口，比盲目搭讪高效。',
+              keywords: ['共同语境', '线下+线上', '扩大接触面'],
+            ),
+            KnowledgeGuideStep(
+              title: '第三步：推进关系',
+              instruction: '三次正向互动后关系才真正开始；主动邀约但不舔；让对方为你做件小事增加投入；抓住暧昧窗口自然推进。',
+              example: '第三次愉快互动后，主动约一次具体活动："下次换我请你，带你去那家店？"',
+              tip: '确认关系靠"做"不靠"问"——气氛到位自然牵手/叫昵称，比微信表白自然得多。',
+              keywords: ['三次法则', '主动不舔', '暧昧窗口'],
+            ),
+          ],
+        ),
+      ],
+    ),
+
+    // ==================================================================
+    // K081 - 如何发现优秀朋友：线上线下全渠道识人指南
+    // ==================================================================
+    'K081': KnowledgeExtensionBundle(
+      knowledgeId: 'K081',
+      keyPoints: [
+        KnowledgeKeyPoint(
+          title: '线上：从内容看人',
+          content: '抖音/快手看长期发什么；朋友圈看互动质量；社区看长内容逻辑与审美；网友/搭子先轻量合作再进现实圈。',
+          icon: Icons.visibility_rounded,
+          importance: '核心',
+        ),
+        KnowledgeKeyPoint(
+          title: '线下：从行为看人',
+          content: '朋友介绍（信用背书最高）、兴趣社群（责任心/配合度）、行业沙龙（视野格局）、志愿者（人品底线）。',
+          icon: Icons.people_rounded,
+          importance: '核心',
+        ),
+        KnowledgeKeyPoint(
+          title: '识人四信号',
+          content: '1.持续输出质量 2.三观一致（对钱/家人/弱者态度）3.情绪稳定 4.靠谱度（说到做到、守时守约）。',
+          icon: Icons.verified_rounded,
+          importance: '重要',
+        ),
+        KnowledgeKeyPoint(
+          title: '避坑信号',
+          content: '🚩杀猪盘（带你投资）🚩负能量黑洞（只倒苦水）🚩只索取不付出🚩人设崩塌（说一套做一套）。',
+          icon: Icons.shield_rounded,
+          importance: '重要',
+        ),
+      ],
+      practices: [
+        KnowledgePractice(
+          id: 'K081-P1',
+          scenario: '你在一个本地读书群里潜水两周，发现有人持续认真推荐书单、耐心解答新人问题。你想把TA从"群友"变成"可深交的人"。',
+          contactPersona: '群里活跃的靠谱答疑者，温和有底气，对你无偏见',
+          openingMessage: '（你在群里问了个关于某本书的问题，TA认真回了你）谢谢！你之前推荐的那本我也去看了。',
+          goodKeywords: ['推荐', '一起', '线下', '活动', '喜欢', '你呢', '约'],
+          referenceReply: '不客气～其实这周末有个线下读书会，你是本地的吧？感兴趣可以一起来，人不多聊得比较深。',
+          tip: '从群里已有的价值对话切入，用"共同活动"轻量邀约，比冷不丁"在吗"自然，也便于线下观察。',
+        ),
+        KnowledgePractice(
+          id: 'K081-P2',
+          scenario: '一个刚认识的网友和你组队打了几次游戏，配合不错。对方提议"加微信经常一起玩"，你判断要不要拉进现实圈。',
+          contactPersona: '游戏搭子，技术不错、输了不炸毛、会鼓励队友',
+          openingMessage: '（对方）这把配合绝了！加个微信呗，以后经常一起上分。',
+          goodKeywords: ['可以', '先', '组队', '项目', '观察', '慢慢', '靠谱'],
+          referenceReply: '好啊，先加着，咱们多组几次队我看看你靠不靠谱——要是每次都准时上线不鸽，再约线下撸串哈哈。',
+          tip: '先轻量合作观察靠谱度与情绪稳定，再决定是否进现实圈，避免一把冲动把陌生人拉进核心社交。',
+        ),
+      ],
+      questions: [
+        KnowledgeQuestion(
+          id: 'K081-Q1',
+          type: QuestionType.trueFalse,
+          question: '刚认识的网友带你参与"内部投资赚钱机会"时，正确的做法是先小投一笔试试水。',
+          options: ['正确', '错误'],
+          correctIndices: [1],
+          explanation: '正确答案：错误。这是典型杀猪盘信号，刚认识就带你"投资赚钱"应直接拉黑，绝不转账。',
+          difficulty: 1,
+        ),
+        KnowledgeQuestion(
+          id: 'K081-Q2',
+          type: QuestionType.singleChoice,
+          question: '下列最能标志"值得深交"的信号是？',
+          options: [
+            '对方朋友圈全是精修大片，看起来很成功',
+            '长期稳定输出有价值内容，且对弱者/陌生人有礼貌',
+            '认识第二天就送你贵重礼物',
+            '每次聊天都先问你收入多少',
+          ],
+          correctIndices: [1],
+          explanation: '正确答案是2。识人看"持续输出质量"和"对弱者的态度"，比一时的光鲜或热情更可靠。',
+          difficulty: 2,
+        ),
+        KnowledgeQuestion(
+          id: 'K081-Q3',
+          type: QuestionType.multipleChoice,
+          question: '"识人四信号"包含哪些？（多选）',
+          options: [
+            '持续输出质量',
+            '三观一致',
+            '情绪稳定',
+            '朋友圈点赞数多',
+          ],
+          correctIndices: [0, 1, 2],
+          explanation: '正确答案是1、2、3。识人四信号是持续输出质量、三观一致、情绪稳定、靠谱度；点赞数多不等于值得深交。',
+          difficulty: 2,
+        ),
+      ],
+      stepGuides: [
+        KnowledgeStepGuide(
+          id: 'K081-G1',
+          title: '识人四步：从观察到深交',
+          scenario: '在高质量场景里看出优秀朋友，再逐步养出来',
+          steps: [
+            KnowledgeGuideStep(
+              title: '第一步：观察',
+              instruction: '线上看长期输出（内容/互动），线下看行为（责任心/配合度/输赢态度），记录对方的一致性。',
+              example: '在群里观察两周，谁是组织者、谁只潜水抬杠。',
+              tip: '不凭一次惊艳下结论，看"持续"而非"瞬间"。',
+              keywords: ['持续输出', '行为观察', '一致性'],
+            ),
+            KnowledgeGuideStep(
+              title: '第二步：轻互动',
+              instruction: '从评论、组队、请教切入，制造低压力接触，检验对方回应质量与情绪稳定。',
+              example: '就群里有价值的对话认真评论，或约一次轻量组队。',
+              tip: '别一上来就"在吗"，带着具体的事或问题去互动。',
+              keywords: ['评论', '组队', '低压力'],
+            ),
+            KnowledgeGuideStep(
+              title: '第三步：小合作',
+              instruction: '一起做一件具体的小事（探店/项目/运动），在协作中看靠谱度与配合度。',
+              example: '约一次线下读书会或组队完成一个小任务。',
+              tip: '合作是照妖镜：答应的事做到没、约好的时间守没守，一目了然。',
+              keywords: ['小合作', '靠谱度', '配合度'],
+            ),
+            KnowledgeGuideStep(
+              title: '第四步：深交',
+              instruction: '确认信号后进入深层交流：聊深层观点、互助、守密，把关系养厚。',
+              example: '分享一个真实困扰，看对方是否接得住、守得住。',
+              tip: '同时果断远离消耗型关系（只索取/人设崩塌/负能量黑洞）。',
+              keywords: ['深层交流', '互助', '止损'],
+            ),
+          ],
+        ),
+      ],
+    ),
+
+    // ==================================================================
+    // K082 - 社交动态经营：朋友圈/QQ空间/抖音日常怎么发
+    // ==================================================================
+    'K082': KnowledgeExtensionBundle(
+      knowledgeId: 'K082',
+      keyPoints: [
+        KnowledgeKeyPoint(
+          title: '通用五原则',
+          content: '少炫耀多分享 / 真实>精致 / 积极为底色 / 保护隐私 / 结尾抛钩子引互动。',
+          icon: Icons.auto_awesome_rounded,
+          importance: '核心',
+        ),
+        KnowledgeKeyPoint(
+          title: '朋友圈节奏',
+          content: '每周2-4条最舒适；生活碎片+观点+偶尔成就三件套轮换；走心评论、及时回评；忌半夜矫情长文。',
+          icon: Icons.chat_bubble_rounded,
+          importance: '重要',
+        ),
+        KnowledgeKeyPoint(
+          title: 'QQ空间定位',
+          content: '更私人更怀旧，适合发情绪/回忆/熟人互动；说说走生活感；留言板是关系温度计。',
+          icon: Icons.favorite_outline_rounded,
+          importance: '了解',
+        ),
+        KnowledgeKeyPoint(
+          title: '抖音日常人设',
+          content: '人设一条线贯穿；选题来自生活越具体越有代入感；前3秒给钩子；频率稳定比爆款重要；经营评论区。',
+          icon: Icons.camera_alt_rounded,
+          importance: '重要',
+        ),
+      ],
+      practices: [
+        KnowledgePractice(
+          id: 'K082-P1',
+          scenario: '你拿到一个挺有分量的小成就（项目上线/考过证），想发朋友圈，但怕显得炫耀。',
+          contactPersona: '朋友圈里的同事和半熟人，对你有基本好感但保持距离',
+          openingMessage: '（你正犹豫要不要发）……',
+          goodKeywords: ['谢谢', '团队', '运气', '顺便', '大家', '一起', '分享'],
+          referenceReply: '项目终于上线啦🎉 其实一半靠队友carry，一半靠运气——顺便问下大家最近都在用哪款协作工具，求安利～',
+          tip: '成就配谦逊/幽默+把功劳分给他人+结尾留钩子，既展示又不得罪人，还涨互动。',
+        ),
+        KnowledgePractice(
+          id: 'K082-P2',
+          scenario: '你想做一条抖音日常，但前几秒总是留不住人、推流差。你在琢磨怎么改开头。',
+          contactPersona: '刷到你视频的陌生观众，注意力只有3秒，没钩子就划走',
+          openingMessage: '（镜头对准你，你准备开口）……',
+          goodKeywords: ['你', '知道', '吗', '其实', '原来', '反差', '先别'],
+          referenceReply: '你以为健身最难的的是坚持？其实80%的人第一天就输在了装备上——先别划走，我教你三件性价比最高的东西。',
+          tip: '前3秒给反差/疑问/干货预告当钩子，把"你以为…其实…"这种结构用起来，完播率决定推流。',
+        ),
+      ],
+      questions: [
+        KnowledgeQuestion(
+          id: 'K082-Q1',
+          type: QuestionType.trueFalse,
+          question: '朋友圈可以全天候随时发，半夜发一段矫情长文也没关系，朋友会理解。',
+          options: ['正确', '错误'],
+          correctIndices: [1],
+          explanation: '正确答案：错误。半夜矫情长文、刷屏、全程抱怨是朋友圈禁忌，会被默默屏蔽，整体调性应保持积极。',
+          difficulty: 1,
+        ),
+        KnowledgeQuestion(
+          id: 'K082-Q2',
+          type: QuestionType.singleChoice,
+          question: '抖音短视频最该在什么时候给观众"钩子"？',
+          options: [
+            '视频结尾总结时',
+            '前3秒开头',
+            '中间转场时',
+            '字幕里随便放',
+          ],
+          correctIndices: [1],
+          explanation: '正确答案是2。短视频重前3秒，开头就用反差/疑问/干货预告给钩子，才能留住人、拿到推流。',
+          difficulty: 2,
+        ),
+        KnowledgeQuestion(
+          id: 'K082-Q3',
+          type: QuestionType.multipleChoice,
+          question: '社交动态经营的"通用五原则"包括？（多选）',
+          options: [
+            '少炫耀多分享',
+            '真实大于精致',
+            '保护隐私不打码不露',
+            '结尾抛问题留钩子引互动',
+          ],
+          correctIndices: [0, 1, 3],
+          explanation: '正确答案是1、2、4。"保护隐私"是原则之一，但做法是"一律打码/不露"，选项3说"不打码不露"是错的。',
+          difficulty: 2,
+        ),
+      ],
+      stepGuides: [
+        KnowledgeStepGuide(
+          id: 'K082-G1',
+          title: '社交动态经营四步',
+          scenario: '把动态经营成你的第二张名片',
+          steps: [
+            KnowledgeGuideStep(
+              title: '第一步：定人设',
+              instruction: '先想清楚你想在别人眼里是什么样的人，一条主线贯穿所有平台，别今天美食明天财经后天哭穷。',
+              example: '在便签写下3个关键词（如：爱运动/会做饭/懂穿搭），发之前对照。',
+              tip: '人设一致才有记忆点，频繁切换人设会让观众困惑、掉粉。',
+              keywords: ['人设', '主线', '一致性'],
+            ),
+            KnowledgeGuideStep(
+              title: '第二步：控频率',
+              instruction: '朋友圈每周2-4条；抖音每周2-3条稳定更新。刷屏会被屏蔽，断更会掉权重。',
+              example: '用日历排期，把生活碎片/观点/成就三件套轮换着发。',
+              tip: '频率稳定比偶尔爆款更重要，平台按稳定更新给基础推流。',
+              keywords: ['频率', '排期', '稳定'],
+            ),
+            KnowledgeGuideStep(
+              title: '第三步：引互动',
+              instruction: '结尾抛问题/留钩子，给别人评论走心，别人评你及时回；抖音回复热评、接梗制造记忆点。',
+              example: '发成就配"大家最近都在用哪款工具？求安利～"。',
+              tip: '互动率（评论/回复）直接决定朋友圈可见度与抖音推流。',
+              keywords: ['钩子', '走心评论', '互动率'],
+            ),
+            KnowledgeGuideStep(
+              title: '第四步：护隐私',
+              instruction: '住址、行程、车牌、证件、公司机密一律打码/不露；不秒发秒删、不全程负能量。',
+              example: '发定位只到商圈，不发具体门牌；车票打码再发。',
+              tip: '真实≠裸奔，保护隐私是经营长期人设的底线。',
+              keywords: ['隐私', '打码', '底线'],
+            ),
+          ],
+        ),
+      ],
+    ),
+
   };
 
   // ====================================================================
