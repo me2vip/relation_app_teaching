@@ -157,11 +157,7 @@ jobs:
           #    这里立刻识别并给精准提示，避免用户在下一步才莫名其妙挂
           if printf '%s' "$KEYSTORE_B64" | grep -q "-----BEGIN"; then
             FIRST_LINE="$(printf '%s' "$KEYSTORE_B64" | head -n 1)"
-            cleanup_then_fallback "
-❌❌❌ 你贴的 ANDROID_KEYSTORE_B64 内容不是 jks 密钥库，而是『PEM 格式证书/私钥』：检测到第一行 = $FIRST_LINE
-正确做法：对 upload-keystore.jks 这个『二进制文件本身』做 base64，不是把证书文本贴进去。
-👉 立刻按本对话末尾的『生成真正 jks base64 的命令』重新生成，复制到 Secret。
-（Android 签名必须使用 keystore 内的私钥，单有公钥证书是签不了名的）"
+            cleanup_then_fallback "PEM 证书误贴为 jks: 检测到 -----BEGIN----- 开头，你的 ANDROID_KEYSTORE_B64 是证书/私钥文本而非 jks 二进制 base64。请对 upload-keystore.jks 文件本身做 base64 编码后重新覆盖 Secret。第一行=$FIRST_LINE"
             exit 0
           fi
 
