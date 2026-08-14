@@ -590,6 +590,15 @@ class KnowledgeExtensionRegistry {
           referenceReply: '我也是！对了，你上次说那家手冲店，我超想去——下次换我请你，顺便带你去？',
           tip: '抓住暧昧窗口用"下次+具体邀约"推一把，把模糊好感落成下一次见面，而不是停留在"聊得开心"。',
         ),
+        KnowledgePractice(
+          id: 'K080-P3',
+          scenario: '你主动约了三次，对方两次放鸽子、回复越来越慢、从不主动找你。你想体面地止损。',
+          contactPersona: '对你兴趣明显下降的人，仍在礼貌维系但不投入',
+          openingMessage: '（你发去第四次邀约，对方隔了一天才回）这周末有空吗？还是老地方？',
+          goodKeywords: ['最近', '忙', '理解', '先', '慢慢', '不勉强', '下次'],
+          referenceReply: '哈哈最近确实有点忙，先不约啦，理解一下～你先忙你的，下次有机会再说。',
+          tip: '对方冷淡时别追问"为什么"，直接降低投入、把注意力转回自己，沉默比纠缠体面。',
+        ),
       ],
       questions: [
         KnowledgeQuestion(
@@ -629,6 +638,20 @@ class KnowledgeExtensionRegistry {
           explanation: '正确答案是1、2、4。脱单=可被喜欢的状态 × 足够大的社交半径 × 敢于推进的行动力；"宅家等被遇见"是最大误区。',
           difficulty: 2,
         ),
+        KnowledgeQuestion(
+          id: 'K080-Q4',
+          type: QuestionType.multipleChoice,
+          question: '下列哪些是"对方对你有兴趣"的积极信号？（多选）',
+          options: [
+            '回复速度快、字数多',
+            '主动找话题、问你的事',
+            '从不主动联系但一直和你聊天',
+            '愿意为你做件小事（帮你/赴约）',
+          ],
+          correctIndices: [0, 1, 3],
+          explanation: '正确答案是1、2、4。"从不主动但一直聊天"往往是骑驴找马或养鱼，及时止损比死磕更划算。',
+          difficulty: 2,
+        ),
       ],
       stepGuides: [
         KnowledgeStepGuide(
@@ -656,6 +679,41 @@ class KnowledgeExtensionRegistry {
               example: '第三次愉快互动后，主动约一次具体活动："下次换我请你，带你去那家店？"',
               tip: '确认关系靠"做"不靠"问"——气氛到位自然牵手/叫昵称，比微信表白自然得多。',
               keywords: ['三次法则', '主动不舔', '暧昧窗口'],
+            ),
+          ],
+        ),
+        KnowledgeStepGuide(
+          id: 'K080-G2',
+          title: '脱单避坑自检清单',
+          scenario: '开始行动前，先对照这四条误区给自己打分',
+          steps: [
+            KnowledgeGuideStep(
+              title: '误区一：等缘分',
+              instruction: '不出门、不加群、不主动 = 接触面为0。缘分需要接触面，先把自己放进人群里。',
+              example: '这周至少参加1次线下活动或主动约1个朋友组局。',
+              tip: '把"等遇到"改成"去遇到"。',
+              keywords: ['接触面', '主动'],
+            ),
+            KnowledgeGuideStep(
+              title: '误区二：跪舔/单方面付出',
+              instruction: '一味讨好换不来尊重，只会让对方失去兴趣。双向投入才是健康关系的起点。',
+              example: '对方不回就先忙自己的，不秒回、不连环追问。',
+              tip: '你的价值不靠讨好证明。',
+              keywords: ['不舔', '双向'],
+            ),
+            KnowledgeGuideStep(
+              title: '误区三：同时聊很多人比较',
+              instruction: '同时养多条线既消耗精力，也极易穿帮、伤口碑。专注2-3个重点就好。',
+              example: '把聊天对象控制在能认真回应的数量内。',
+              tip: '质量 > 数量。',
+              keywords: ['专注', '质量'],
+            ),
+            KnowledgeGuideStep(
+              title: '误区四：社交平台发伤感文案求关注',
+              instruction: '成年人的体面是收拾好情绪再出门。负能量刷屏只会劝退潜在对象。',
+              example: '想吐槽时先发给死党，不在公开动态里卖惨。',
+              tip: '动态是你的名片，别写成情绪垃圾桶。',
+              keywords: ['体面', '情绪'],
             ),
           ],
         ),
@@ -712,6 +770,15 @@ class KnowledgeExtensionRegistry {
           referenceReply: '好啊，先加着，咱们多组几次队我看看你靠不靠谱——要是每次都准时上线不鸽，再约线下撸串哈哈。',
           tip: '先轻量合作观察靠谱度与情绪稳定，再决定是否进现实圈，避免一把冲动把陌生人拉进核心社交。',
         ),
+        KnowledgePractice(
+          id: 'K081-P3',
+          scenario: '朋友组局吃饭，带了三位你都不熟的新朋友。你想在不尴尬的前提下，自然融入并建立一两段新连接。',
+          contactPersona: '朋友的朋友，放松、无偏见、对陌生人友好',
+          openingMessage: '（落座后，有人问你）你是XX（共同朋友）哪儿认识的呀？',
+          goodKeywords: ['一起', '朋友', '也', '喜欢', '组', '下次', '聊'],
+          referenceReply: '我是和XX在读书会认识的～听他说你特能聊电影，我最近正好片荒，有啥必看的有狠货？',
+          tip: '从"共同朋友"和"对方擅长的话题"切入，把话题抛回去让对方当主角，融入最快。',
+        ),
       ],
       questions: [
         KnowledgeQuestion(
@@ -751,6 +818,20 @@ class KnowledgeExtensionRegistry {
           explanation: '正确答案是1、2、3。识人四信号是持续输出质量、三观一致、情绪稳定、靠谱度；点赞数多不等于值得深交。',
           difficulty: 2,
         ),
+        KnowledgeQuestion(
+          id: 'K081-Q4',
+          type: QuestionType.multipleChoice,
+          question: '下列哪些属于"需要远离的消耗型关系"避坑信号？（多选）',
+          options: [
+            '杀猪盘：刚认识就带你投资赚钱',
+            '负能量黑洞：只倒苦水、从不给反馈',
+            '只索取不付出：借money/吐槽但从不帮回',
+            '人设崩塌：说一套做一套、背后说人坏话',
+          ],
+          correctIndices: [0, 1, 2, 3],
+          explanation: '正确答案：全选。这四类都是典型消耗/危险信号，遇到应主动疏远或直接拉黑（杀猪盘）。',
+          difficulty: 2,
+        ),
       ],
       stepGuides: [
         KnowledgeStepGuide(
@@ -785,6 +866,34 @@ class KnowledgeExtensionRegistry {
               example: '分享一个真实困扰，看对方是否接得住、守得住。',
               tip: '同时果断远离消耗型关系（只索取/人设崩塌/负能量黑洞）。',
               keywords: ['深层交流', '互助', '止损'],
+            ),
+          ],
+        ),
+        KnowledgeStepGuide(
+          id: 'K081-G2',
+          title: '朋友质量自检：维护 vs 远离',
+          scenario: '定期给朋友圈做个体检，把精力放在对的人身上',
+          steps: [
+            KnowledgeGuideStep(
+              title: '维护：少而精 + 持续投入',
+              instruction: '核心朋友（3-5人）保持每月至少一次深度交流；对方需要时第一时间出现；能吃亏、守边界。',
+              example: '每月固定和2-3个核心朋友单独约一次饭或电话。',
+              tip: '高质量关系靠"持续"而非"频繁"。',
+              keywords: ['核心圈', '持续投入'],
+            ),
+            KnowledgeGuideStep(
+              title: '远离：消耗型关系',
+              instruction: '见面后你感觉累/被否定/自我怀疑；只索取从不反馈；背后说其他朋友坏话——主动疏远。',
+              example: '把总是单方面吐槽你的人，从"常聊"名单里降权。',
+              tip: '别因为"认识久了"勉强维持消耗关系。',
+              keywords: ['止损', '降权'],
+            ),
+            KnowledgeGuideStep(
+              title: '边界：再熟也留空间',
+              instruction: '朋友的私事不过问太多，不比较成就，不背后说坏话；有边界的关系才长久。',
+              example: '朋友没主动提的事，不追问；对方吐槽时倾听但不拱火。',
+              tip: '边界感是友谊的保鲜剂。',
+              keywords: ['边界', '不比较'],
             ),
           ],
         ),
@@ -841,6 +950,15 @@ class KnowledgeExtensionRegistry {
           referenceReply: '你以为健身最难的的是坚持？其实80%的人第一天就输在了装备上——先别划走，我教你三件性价比最高的东西。',
           tip: '前3秒给反差/疑问/干货预告当钩子，把"你以为…其实…"这种结构用起来，完播率决定推流。',
         ),
+        KnowledgePractice(
+          id: 'K082-P3',
+          scenario: '你发了一条抖音/朋友圈，热评里有人认真夸你、还有人抛梗接话。你想把互动率做起来。',
+          contactPersona: '评论区里的活跃观众，对你内容有好感、爱玩梗',
+          openingMessage: '（评论区）楼主这个反转绝了哈哈，求更新下集！',
+          goodKeywords: ['谢谢', '下集', '安排', '梗', '也', '你们', '评论'],
+          referenceReply: '谢谢宝子！下集已经在剪了，你们想看啥扣1，点赞高的我先拍～',
+          tip: '回复热评、接梗、把决定权抛给观众（"你们想看啥"），互动率直接拉动推流。',
+        ),
       ],
       questions: [
         KnowledgeQuestion(
@@ -880,6 +998,20 @@ class KnowledgeExtensionRegistry {
           explanation: '正确答案是1、2、4。"保护隐私"是原则之一，但做法是"一律打码/不露"，选项3说"不打码不露"是错的。',
           difficulty: 2,
         ),
+        KnowledgeQuestion(
+          id: 'K082-Q4',
+          type: QuestionType.multipleChoice,
+          question: '下列哪些属于社交动态的"避坑清单"内容？（多选）',
+          options: [
+            '负能量刷屏、当别人的情绪垃圾桶',
+            '过度精致假、全是精修大片没人信',
+            '秒发秒删、显得极度在意外界评价',
+            '只发广告/引流、把朋友当客户池',
+          ],
+          correctIndices: [0, 1, 2, 3],
+          explanation: '正确答案：全选。四类都会减分；动态的底色应是积极、真实、有互动，而非表演或营销。',
+          difficulty: 2,
+        ),
       ],
       stepGuides: [
         KnowledgeStepGuide(
@@ -914,6 +1046,41 @@ class KnowledgeExtensionRegistry {
               example: '发定位只到商圈，不发具体门牌；车票打码再发。',
               tip: '真实≠裸奔，保护隐私是经营长期人设的底线。',
               keywords: ['隐私', '打码', '底线'],
+            ),
+          ],
+        ),
+        KnowledgeStepGuide(
+          id: 'K082-G2',
+          title: '动态经营避坑清单',
+          scenario: '发之前对照这四条，避免辛苦经营反而减分',
+          steps: [
+            KnowledgeGuideStep(
+              title: '避坑一：负能量刷屏',
+              instruction: '谁都不想当你的情绪垃圾桶。可以偶尔吐槽，但整体调性保持积极。',
+              example: '想抱怨时发给死党私聊，不在公开动态连发。',
+              tip: '积极为底色，吐槽是调味不是主菜。',
+              keywords: ['积极', '不刷屏'],
+            ),
+            KnowledgeGuideStep(
+              title: '避坑二：过度精致假',
+              instruction: '全是大片精修，没人信那是真实生活；偶尔翻车、平凡反而更可亲。',
+              example: '精修图配一句自嘲，比干晒更招人喜欢。',
+              tip: '真实 > 精致。',
+              keywords: ['真实', '不装'],
+            ),
+            KnowledgeGuideStep(
+              title: '避坑三：秒发秒删',
+              instruction: '发完又删，显得你极度在意外界评价，反而减分；想清楚再发。',
+              example: '发之前默数三秒，确认不后悔再点发送。',
+              tip: '稳定感比完美感更贵。',
+              keywords: ['稳定', '不删'],
+            ),
+            KnowledgeGuideStep(
+              title: '避坑四：只发广告/引流',
+              instruction: '朋友不是你的客户池；纯广告动态会被默默屏蔽。',
+              example: '真要推广，放进"偶尔"而非"全部"，并先给价值再带链接。',
+              tip: '先有交情，再有转化。',
+              keywords: ['不引流', '价值先'],
             ),
           ],
         ),
