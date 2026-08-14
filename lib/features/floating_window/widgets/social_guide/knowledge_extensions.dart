@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'teaching_level_system.dart';
 import 'knowledge_extensions_part1.dart';
 import 'knowledge_extensions_part2.dart';
+import 'knowledge_extensions_part3.dart';
 
 // ============================================================================
 // 知识点提炼：核心要点数据模型
@@ -545,8 +546,10 @@ class KnowledgeExtensionRegistry {
   /// 获取指定知识点的扩展数据，不存在则返回默认空扩展
   /// 查找优先级：Part1/Part2 扩展数据 → 原始内联数据 → 自动生成
   static KnowledgeExtensionBundle getBundle(String knowledgeId) {
-    // 优先查找 Part1/Part2 扩展数据（覆盖全部 48 个知识点）
-    final expanded = knowledgePart1Bundles[knowledgeId] ?? knowledgePart2Bundles[knowledgeId];
+    // 优先查找 Part1/Part2/Part3 扩展数据（K001-K054 全覆盖）
+    final expanded = knowledgePart1Bundles[knowledgeId]
+        ?? knowledgePart2Bundles[knowledgeId]
+        ?? kGenderKnowledgeExtensions[knowledgeId];
     if (expanded != null) return expanded;
     // 回退到原始内联数据
     return _bundles[knowledgeId] ?? KnowledgeExtensionBundle(
@@ -561,6 +564,7 @@ class KnowledgeExtensionRegistry {
   static bool hasBundle(String knowledgeId) =>
       knowledgePart1Bundles.containsKey(knowledgeId) ||
       knowledgePart2Bundles.containsKey(knowledgeId) ||
+      kGenderKnowledgeExtensions.containsKey(knowledgeId) ||
       _bundles.containsKey(knowledgeId);
 
   /// 通用核心要点生成（当知识点暂无人工编写扩展时使用）

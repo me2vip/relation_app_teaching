@@ -28,6 +28,7 @@ class SocialKnowledgeBaseWidget extends StatefulWidget {
 class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
   String? _selectedCategory;
   int? _selectedLevel;
+  TargetAudience? _selectedAudience; // 性别适用对象筛选：all/male/female
   String _searchQuery = '';
   final _searchController = TextEditingController();
   final Set<String> _expandedIds = {};
@@ -39,6 +40,20 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
     }
     if (_selectedLevel != null) {
       entries = entries.where((e) => e.relatedLevel == _selectedLevel).toList();
+    }
+    // 性别适用对象筛选（默认 null=全部；选了 male/female 时，同时保留 TargetAudience.all 通用内容，
+    // 但专属内容（male/female）权重更靠前——按"专属优先"排序）
+    if (_selectedAudience != null && _selectedAudience != TargetAudience.all) {
+      final target = _selectedAudience!;
+      entries = entries.where((e) =>
+        e.targetAudience == TargetAudience.all || e.targetAudience == target
+      ).toList();
+      // 把目标受众的专属内容排在前面
+      entries.sort((a, b) {
+        final weightA = a.targetAudience == target ? 0 : 1;
+        final weightB = b.targetAudience == target ? 0 : 1;
+        return weightA.compareTo(weightB);
+      });
     }
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
@@ -67,9 +82,64 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
         _buildSearchBar(cs),
         // 分类筛选
         _buildCategoryFilter(cs),
+        // 性别适用对象筛选（在分类下面新增一行）
+        _buildAudienceFilter(cs),
         // 内容列表
         Expanded(child: _buildEntryList(cs)),
       ],
+    );
+  }
+
+  Widget _buildAudienceFilter(ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+      child: SizedBox(
+        height: 32,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            _buildAudienceChip(null, '全部', Icons.group_rounded, cs),
+            const SizedBox(width: 6),
+            ...TargetAudience.values.map((a) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 6),
+                child: _buildAudienceChip(a, a.label, a.icon, cs),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAudienceChip(TargetAudience? value, String label, IconData icon, ColorScheme cs) {
+    final selected = _selectedAudience == value;
+    return GestureDetector(
+      onTap: () => setState(() {
+        _selectedAudience = _selectedAudience == value ? null : value;
+      }),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        decoration: BoxDecoration(
+          color: selected ? cs.secondary : cs.surfaceContainerHighest.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: selected ? cs.onSecondary : cs.onSurfaceVariant),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                color: selected ? cs.onSecondary : cs.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -244,15 +314,27 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 标题
-                        Text(
-                          entry.title,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        // 标题 + 右侧适用对象徽章
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                entry.title,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            // 适用对象：男生/女生 专属徽章
+                            if (entry.targetAudience != TargetAudience.all)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 6),
+                                child: _audienceBadge(entry.targetAudience, cs),
+                              ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         // 标签行
@@ -662,6 +744,35 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
   }
 
   // ===================== 辅助组件 =====================
+  Widget _audienceBadge(TargetAudience a, ColorScheme cs) {
+    final Color bg = a == TargetAudience.male
+        ? Colors.blue.withValues(alpha: 0.1)
+        : Colors.pink.withValues(alpha: 0.12);
+    final Color fg = a == TargetAudience.male ? Colors.blue.shade700 : Colors.pink.shade700;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(a.icon, size: 11, color: fg),
+          const SizedBox(width: 2),
+          Text(
+            a.label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: fg,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _miniChip(String label, Color bg, Color fg) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
