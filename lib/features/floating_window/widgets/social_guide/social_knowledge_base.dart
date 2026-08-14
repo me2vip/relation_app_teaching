@@ -1,13 +1,17 @@
 /// 社交知识词典 Widget
 ///
 /// 系统化整理社交知识点（按关卡分类），提供浏览和搜索入口。
-/// 包含：原则、技巧、常见误区、案例。
+/// 支持展开查看知识点详情，无需跳转子页面。
 library social_knowledge_base_widget;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+
 import 'teaching_level_system.dart';
 import 'knowledge_extensions.dart';
-import 'knowledge_detail_page.dart';
+import 'knowledge_practice_page.dart';
+import 'knowledge_test_page.dart';
+import 'knowledge_extract_page.dart';
 
 // ============================================================================
 // 社交知识词典浏览 Widget
@@ -26,6 +30,7 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
   int? _selectedLevel;
   String _searchQuery = '';
   final _searchController = TextEditingController();
+  final Set<String> _expandedIds = {};
 
   List<SocialKnowledgeEntry> get _filteredEntries {
     var entries = SocialKnowledgeBase.entries;
@@ -179,14 +184,6 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
     );
   }
 
-  void _openDetail(SocialKnowledgeEntry entry) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => KnowledgeDetailPage(entry: entry),
-      ),
-    );
-  }
-
   Widget _buildEntryCard(SocialKnowledgeEntry entry, ColorScheme cs) {
     final hasLevel = entry.relatedLevel > 0 && entry.relatedLevel <= 10;
     final level = hasLevel ? LevelRegistry.getLevel(entry.relatedLevel) : null;
@@ -195,146 +192,451 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
     final hasPractice = ext.practices.isNotEmpty;
     final hasTest = ext.questions.isNotEmpty;
     final hasExtract = ext.keyPoints.isNotEmpty;
+    final isExpanded = _expandedIds.contains(entry.id);
 
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.5)),
+        side: BorderSide(
+          color: isExpanded
+              ? catColor.withValues(alpha: 0.5)
+              : cs.outlineVariant.withValues(alpha: 0.5),
+        ),
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _openDetail(entry),
-          borderRadius: BorderRadius.circular(14),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        children: [
+          // ========== 收起状态：标题行 ==========
+          InkWell(
+            onTap: () {
+              setState(() {
+                if (isExpanded) {
+                  _expandedIds.remove(entry.id);
+                } else {
+                  _expandedIds.add(entry.id);
+                }
+              });
+            },
+            borderRadius: BorderRadius.circular(14),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 10, 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 左侧分类图标
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: catColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      _getCategoryIcon(entry.category),
+                      size: 20,
+                      color: catColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // 中间文字区
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 标题
+                        Text(
+                          entry.title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        // 标签行
+                        Wrap(
+                          spacing: 5,
+                          runSpacing: 4,
+                          children: [
+                            if (hasLevel)
+                              _miniChip(
+                                'Lv${entry.relatedLevel} ${level!.title}',
+                                cs.primary.withValues(alpha: 0.1),
+                                cs.primary,
+                              )
+                            else
+                              _miniChip(
+                                entry.category,
+                                catColor.withValues(alpha: 0.1),
+                                catColor,
+                              ),
+                            ...entry.tags.take(2).map(
+                              (tag) => _miniChip(
+                                '#$tag',
+                                cs.surfaceContainerHighest.withValues(alpha: 0.6),
+                                cs.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        // 内容预览（收起时）
+                        if (!isExpanded)
+                          Text(
+                            _preview(entry.content),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: cs.onSurfaceVariant.withValues(alpha: 0.85),
+                              height: 1.4,
+                            ),
+                          ),
+                        // 功能入口徽章（始终显示）
+                        if (!isExpanded) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              _featureBadge(
+                                icon: Icons.flash_on_rounded,
+                                label: '练习',
+                                count: ext.practices.length,
+                                activeColor: Colors.green,
+                                active: hasPractice,
+                                cs: cs,
+                              ),
+                              const SizedBox(width: 6),
+                              _featureBadge(
+                                icon: Icons.quiz_rounded,
+                                label: '测试',
+                                count: ext.questions.length,
+                                activeColor: Colors.orange,
+                                active: hasTest,
+                                cs: cs,
+                              ),
+                              const SizedBox(width: 6),
+                              _featureBadge(
+                                icon: Icons.lightbulb_rounded,
+                                label: '提炼',
+                                count: ext.keyPoints.length,
+                                activeColor: catColor,
+                                active: hasExtract,
+                                cs: cs,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  // 展开/收起箭头
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: AnimatedRotation(
+                      turns: isExpanded ? 0.25 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.chevron_right_rounded,
+                        size: 20,
+                        color: isExpanded ? catColor : cs.onSurfaceVariant.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // ========== 展开状态：详情内容 ==========
+          if (isExpanded)
+            _buildExpandedContent(entry, ext, cs, catColor, hasLevel, level),
+        ],
+      ),
+    );
+  }
+
+  // ===================== 展开后的内容区 =====================
+  Widget _buildExpandedContent(
+    SocialKnowledgeEntry entry,
+    KnowledgeExtensionBundle ext,
+    ColorScheme cs,
+    Color catColor,
+    bool hasLevel,
+    TeachingLevel? level,
+  ) {
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 200),
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 分割线
+            Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.3)),
+            const SizedBox(height: 10),
+
+            // 1) 完整内容
+            _buildSectionTitle('完整内容', Icons.menu_book_rounded, cs.primary, cs),
+            const SizedBox(height: 6),
+            MarkdownBody(
+              data: entry.content,
+              selectable: true,
+              styleSheet: MarkdownStyleSheet(
+                p: TextStyle(fontSize: 12.5, color: cs.onSurface, height: 1.6),
+                h1: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: cs.onSurface),
+                h2: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: cs.onSurface),
+                h3: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: cs.onSurface),
+                h4: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: cs.onSurface),
+                strong: TextStyle(fontWeight: FontWeight.w700, color: cs.onSurface),
+                em: TextStyle(fontStyle: FontStyle.italic, color: cs.onSurface),
+                code: TextStyle(
+                  fontSize: 11.5,
+                  backgroundColor: cs.surfaceContainerHighest,
+                  color: cs.primary,
+                ),
+                codeblockDecoration: BoxDecoration(
+                  color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                blockquoteDecoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(color: cs.primary.withValues(alpha: 0.3), width: 3),
+                  ),
+                ),
+                blockquotePadding: const EdgeInsets.fromLTRB(12, 4, 8, 4),
+              ),
+            ),
+
+            // 2) 知识点提炼
+            if (ext.keyPoints.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              _buildSectionTitle('核心要点', Icons.lightbulb_rounded, catColor, cs),
+              const SizedBox(height: 6),
+              ...ext.keyPoints.map((kp) => _buildKeyPointItem(kp, cs, catColor)),
+            ],
+
+            // 3) 三个功能入口按钮
+            const SizedBox(height: 14),
+            Row(
               children: [
-                // 左侧分类图标
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: catColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    _getCategoryIcon(entry.category),
-                    size: 20,
-                    color: catColor,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                // 中间文字区
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 标题
-                      Text(
-                        entry.title,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      // 标签行
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 4,
-                        children: [
-                          if (hasLevel)
-                            _miniChip(
-                              'Lv${entry.relatedLevel} ${level!.title}',
-                              cs.primary.withValues(alpha: 0.1),
-                              cs.primary,
-                            )
-                          else
-                            _miniChip(
-                              entry.category,
-                              catColor.withValues(alpha: 0.1),
-                              catColor,
-                            ),
-                          ...entry.tags.take(2).map(
-                            (tag) => _miniChip(
-                              '#$tag',
-                              cs.surfaceContainerHighest.withValues(alpha: 0.6),
-                              cs.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // 内容预览
-                      Text(
-                        _preview(entry.content),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: cs.onSurfaceVariant.withValues(alpha: 0.85),
-                          height: 1.4,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // 三个功能入口徽章
-                      Row(
-                        children: [
-                          _featureBadge(
-                            icon: Icons.flash_on_rounded,
-                            label: '练习',
-                            count: ext.practices.length,
-                            activeColor: Colors.green,
-                            active: hasPractice,
-                            cs: cs,
-                          ),
-                          const SizedBox(width: 6),
-                          _featureBadge(
-                            icon: Icons.quiz_rounded,
-                            label: '测试',
-                            count: ext.questions.length,
-                            activeColor: Colors.orange,
-                            active: hasTest,
-                            cs: cs,
-                          ),
-                          const SizedBox(width: 6),
-                          _featureBadge(
-                            icon: Icons.lightbulb_rounded,
-                            label: '提炼',
-                            count: ext.keyPoints.length,
-                            activeColor: catColor,
-                            active: hasExtract,
-                            cs: cs,
-                          ),
-                        ],
-                      ),
-                    ],
+                  child: _buildActionButton(
+                    icon: Icons.flash_on_rounded,
+                    label: '情景练习',
+                    subLabel: ext.practices.isEmpty ? '暂无' : '${ext.practices.length} 个场景',
+                    color: Colors.green,
+                    enabled: ext.practices.isNotEmpty,
+                    onTap: () => _goToPractice(entry, ext),
+                    cs: cs,
                   ),
                 ),
-                const SizedBox(width: 6),
-                // 右箭头
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: cs.onSurfaceVariant.withValues(alpha: 0.5),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.quiz_rounded,
+                    label: '知识测试',
+                    subLabel: ext.questions.isEmpty ? '暂无' : '${ext.questions.length} 道题',
+                    color: Colors.orange,
+                    enabled: ext.questions.isNotEmpty,
+                    onTap: () => _goToTest(entry, ext),
+                    cs: cs,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildActionButton(
+                    icon: Icons.auto_stories_rounded,
+                    label: '要点提炼',
+                    subLabel: '${ext.keyPoints.length} 个要点',
+                    color: catColor,
+                    enabled: true,
+                    onTap: () => _goToExtract(entry, ext),
+                    cs: cs,
                   ),
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, IconData icon, Color color, ColorScheme cs) {
+    return Row(
+      children: [
+        Icon(icon, size: 15, color: color),
+        const SizedBox(width: 5),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKeyPointItem(KnowledgeKeyPoint kp, ColorScheme cs, Color catColor) {
+    final importanceColor = kp.importance == '核心'
+        ? Colors.red.shade400
+        : kp.importance == '重要'
+            ? Colors.orange.shade400
+            : cs.onSurfaceVariant;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest.withValues(alpha: 0.25),
+        borderRadius: BorderRadius.circular(10),
+        border: Border(
+          left: BorderSide(color: catColor.withValues(alpha: 0.4), width: 3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              if (kp.icon != null) ...[
+                Icon(kp.icon, size: 15, color: catColor),
+                const SizedBox(width: 5),
+              ],
+              Expanded(
+                child: Text(
+                  kp.title,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: cs.onSurface,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                decoration: BoxDecoration(
+                  color: importanceColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  kp.importance,
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w600,
+                    color: importanceColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            kp.content,
+            style: TextStyle(
+              fontSize: 11.5,
+              color: cs.onSurfaceVariant,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required String subLabel,
+    required Color color,
+    required bool enabled,
+    required VoidCallback onTap,
+    required ColorScheme cs,
+  }) {
+    final actualColor = enabled ? color : cs.onSurfaceVariant.withValues(alpha: 0.4);
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+          decoration: BoxDecoration(
+            color: actualColor.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: actualColor.withValues(alpha: 0.25)),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, size: 17, color: actualColor),
+              const SizedBox(height: 5),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  color: actualColor,
+                ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                subLabel,
+                style: TextStyle(
+                  fontSize: 9.5,
+                  color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
+  // ===================== 跳转动作 =====================
+  void _goToPractice(SocialKnowledgeEntry entry, KnowledgeExtensionBundle bundle) {
+    if (bundle.practices.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('该知识点暂无情景练习')),
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => KnowledgePracticePage(entry: entry, bundle: bundle),
+      ),
+    );
+  }
+
+  void _goToTest(SocialKnowledgeEntry entry, KnowledgeExtensionBundle bundle) {
+    if (bundle.questions.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('该知识点暂无测试题')),
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => KnowledgeTestPage(entry: entry, bundle: bundle),
+      ),
+    );
+  }
+
+  void _goToExtract(SocialKnowledgeEntry entry, KnowledgeExtensionBundle bundle) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => KnowledgeExtractPage(entry: entry, bundle: bundle),
+      ),
+    );
+  }
+
+  // ===================== 辅助组件 =====================
   Widget _miniChip(String label, Color bg, Color fg) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
