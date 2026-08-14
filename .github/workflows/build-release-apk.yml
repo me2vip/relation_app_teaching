@@ -32,7 +32,10 @@ on:
         type: boolean
 
 env:
-  FLUTTER_VERSION: '3.27.1'            # 与项目 pubspec SDK 匹配（^3.12.2，选一个稳定的 3.x）
+  # 注意：此版本必须提供 Dart SDK 版本 ≥ pubspec.yaml 中 sdk 约束（当前 ^3.12.2）
+  # 对应关系：Flutter 3.47.0 → Dart 3.22.x（报错日志建议用此版本）
+  # 如遇版本再漂移，可到 https://docs.flutter.dev/release/archive 查版本矩阵
+  FLUTTER_VERSION: '3.47.0'
   JAVA_VERSION: '17'                   # build.gradle 使用 Java 17
 
 permissions:
@@ -129,23 +132,38 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
         run: |
-          set +e
           if [[ -n "$KEYSTORE_B64" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" && -n "$STORE_PASSWORD" ]]; then
             echo "检测到签名密钥 Secret，写入签名配置..."
-            echo "$KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
-            cat > android/key.properties <<EOF
+
+            # 1) 解码 keystore（必须放在 android/app 下，与 build.gradle.kts 相对路径匹配）
+            echo "$KEYSTORE_B64" | base64 -d > "$GITHUB_WORKSPACE/android/app/upload-keystore.jks"
+            ls -l "$GITHUB_WORKSPACE/android/app/upload-keystore.jks"
+
+            # 2) 注入 CI 环境变量（build.gradle.kts 会优先读取这 4 个）
+            #    ANDROID_KEYSTORE_PATH 给绝对路径，避免 rootProject.file() 相对路径歧义
+            echo "ANDROID_KEYSTORE_PATH=$GITHUB_WORKSPACE/android/app/upload-keystore.jks" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_ALIAS=$KEY_ALIAS"         >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_PASSWORD=$KEY_PASSWORD"   >> "$GITHUB_ENV"
+            echo "ANDROID_STORE_PASSWORD=$STORE_PASSWORD" >> "$GITHUB_ENV"
+
+            # 3) 再写一份 key.properties 作为本地/兜底（防止未来 build.gradle 回退写法）
+            cat > "$GITHUB_WORKSPACE/android/key.properties" <<EOF
           keyAlias=$KEY_ALIAS
           keyPassword=$KEY_PASSWORD
           storeFile=app/upload-keystore.jks
           storePassword=$STORE_PASSWORD
           EOF
-            echo "✅ 已写入 key.properties 与 keystore"
+            echo "✅ 已通过 CI 环境变量注入正式签名，并写入 key.properties 兜底"
           else
             echo "⚠️  未检测到签名密钥 Secret，release 构建将使用 debug 签名（可安装但不建议上架）"
-            # 删除 key.properties，让 gradle 回落到无签名配置
-            rm -f android/key.properties
+            # 确保任何旧的 key.properties / 环境变量被清理，不干扰构建
+            rm -f "$GITHUB_WORKSPACE/android/key.properties"
+            rm -f "$GITHUB_WORKSPACE/android/app/upload-keystore.jks"
+            echo "ANDROID_KEYSTORE_PATH=" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_ALIAS="      >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_PASSWORD="   >> "$GITHUB_ENV"
+            echo "ANDROID_STORE_PASSWORD=" >> "$GITHUB_ENV"
           fi
-          set -e
 
       # ---------- 构建 APK ----------
       - name: 构建 APK (${{ steps.meta.outputs.build_type }})
