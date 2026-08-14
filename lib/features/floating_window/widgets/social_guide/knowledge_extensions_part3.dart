@@ -239,7 +239,6 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
         goodKeywords: ['刚才忙', '我也是', '看到', '没事', '刚好', '那个事', '继续聊'],
         referenceReply: '（也等20-30分钟再回）"我刚才忙完XX事才看到消息哈哈～对了刚才我们聊到XX那件事，我其实还想继续问你呢，balabala…"',
         tip: '她让你等了多久，你也让她等差不多的时长，或者更长一点。秒回+长篇=你在等着她的消息=低价值。',
-        keywords: [],
       ),
       KnowledgePractice(
         id: 'K050-p3',
@@ -1869,8 +1868,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
       ),
       KnowledgeKeyPoint(
         title: 'TA发脾气/冷战时：不哄、不道歉、不退让',
-        instruction: '控制型的人用情绪惩罚你让你就范。TA发脾气/冷战时：不哄（你哄=TA知道这招有效）、不道歉（你没做错凭什么道歉）、不退让（TA发现冷战没用就会停止用这招）。语气平静但坚定："这是我的决定，我不需要你替我做。"',
-        content: '',
+        content: '控制型的人用情绪惩罚你让你就范。TA发脾气/冷战时：不哄（你哄=TA知道这招有效）、不道歉（你没做错凭什么道歉）、不退让（TA发现冷战没用就会停止用这招）。语气平静但坚定："这是我的决定，我不需要你替我做。"',
         icon: Icons.do_not_disturb_alt_rounded,
         importance: '核心',
       ),
