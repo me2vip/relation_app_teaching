@@ -152,6 +152,19 @@ jobs:
 
           echo "✅ 检测到签名密钥 Secret，写入签名配置..."
 
+          # 0) 常见错误：把 PEM 证书 / 私钥（带 -----BEGIN-----）当成 jks base64 贴进来
+          #    这种情况 base64 也能解码，但解出来是证书 DER，不是合法 jks，后面签名一定挂
+          #    这里立刻识别并给精准提示，避免用户在下一步才莫名其妙挂
+          if printf '%s' "$KEYSTORE_B64" | grep -q "-----BEGIN"; then
+            FIRST_LINE="$(printf '%s' "$KEYSTORE_B64" | head -n 1)"
+            cleanup_then_fallback "
+❌❌❌ 你贴的 ANDROID_KEYSTORE_B64 内容不是 jks 密钥库，而是『PEM 格式证书/私钥』：检测到第一行 = $FIRST_LINE
+正确做法：对 upload-keystore.jks 这个『二进制文件本身』做 base64，不是把证书文本贴进去。
+👉 立刻按本对话末尾的『生成真正 jks base64 的命令』重新生成，复制到 Secret。
+（Android 签名必须使用 keystore 内的私钥，单有公钥证书是签不了名的）"
+            exit 0
+          fi
+
           # 1) 清洗 base64：
           #    - 去掉所有空白（换行/回车/空格/Tab）—— 这是 base64: invalid input 的 99% 根因
           #    - 去掉 BOM / 常见非 base64 控制字符
@@ -159,19 +172,32 @@ jobs:
           CLEAN_B64="$(printf '%s' "$KEYSTORE_B64" | tr -d '\r\n \t\0\v\f' | sed 's/^\xEF\xBB\xBF//')"
           echo "[debug] 清洗前长度=${#KEYSTORE_B64}，清洗后长度=${#CLEAN_B64}"
 
+          # 额外自检：合法 base64 的长度必须是 4 的倍数
+          REMAINDER=$(( ${#CLEAN_B64} % 4 ))
+          if [[ "$REMAINDER" != "0" ]]; then
+            echo "[debug] 清洗后长度 ${#CLEAN_B64} 不是 4 的倍数（base64 规范要求），说明原始内容被截断或粘贴不完整"
+          fi
+
           JKS_PATH="$GITHUB_WORKSPACE/android/app/upload-keystore.jks"
           if ! printf '%s' "$CLEAN_B64" | base64 -di > "$JKS_PATH"; then
-            cleanup_then_fallback "base64 解码失败，你的 ANDROID_KEYSTORE_B64 Secret 内容不是合法的 jks base64。请按本节最后一段的『重新生成 base64 单行命令』重新生成并覆盖 Secret。"
+            cleanup_then_fallback "base64 解码失败，你的 ANDROID_KEYSTORE_B64 Secret 内容不是合法的 base64。请按本节最后一段的『重新生成 base64 单行命令』重新生成并覆盖 Secret。"
             exit 0
           fi
 
-          # 2) jks 文件大小 / 完整性校验（避免解码出来的是 0 字节垃圾文件）
+          # 2) jks 文件大小 / 完整性校验（避免解码出来的是 0 字节垃圾文件 / DER 证书）
           if [[ ! -s "$JKS_PATH" ]]; then
             cleanup_then_fallback "解码后的 jks 文件大小为 0 字节，base64 内容无效。"
             exit 0
           fi
+          if [[ $(stat -c%s "$JKS_PATH") -lt 500 ]]; then
+            cleanup_then_fallback "解码后的文件 < 500 字节，不是正常的 jks（通常 2KB+）。你很可能把 base64 的证书内容当作 jks 文件做了编码。请直接对 upload-keystore.jks 这个文件本身做 base64。"
+            exit 0
+          fi
           echo "[debug] 解码后的 jks 大小：$(stat -c%s "$JKS_PATH") 字节"
           ls -l "$JKS_PATH"
+          # Magic bytes 校验：JKS 头 4 字节是 FE ED FE ED（十六进制）
+          MAGIC="$(xxd -l 4 -p "$JKS_PATH" 2>/dev/null || true)"
+          echo "[debug] jks 头 4 字节 = $MAGIC（正常 JKS 应为 feedfeed；PKCS12 会是其他值，但 keytool 仍能打开）"
 
           # 3) 用 keytool -list 校验 jks 能被正确打开（含 alias / storePass 是否正确）
           #    失败就立刻降级，避免把错误带到 30 分钟后的 gradle 签名步骤才挂
