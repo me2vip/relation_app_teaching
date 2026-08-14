@@ -1,0 +1,326 @@
+/// 应用内自动更新服务
+///
+/// 通过 GitHub Release API 检查最新版本，下载 APK 后调用系统安装器安装。
+///
+/// 工作流程：
+///   1. [checkForUpdate]：调用 GitHub `releases/latest` 接口，比对版本号
+///   2. [downloadApk]：流式下载 APK 到外部存储，支持进度回调
+///   3. [installApk]：调用 [OpenFilex] 拉起系统安装器（Android 8+ 自动处理未知来源权限）
+///
+/// GitHub API 文档：https://docs.github.com/en/rest/releases/releases#get-the-latest-release
+library app_update_service;
+
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
+
+/// GitHub Release 元信息
+class GithubReleaseInfo {
+  /// Release tag（如 "v1.0.10"）
+  final String tagName;
+
+  /// 版本号（如 "1.0.10"，去掉 v 前缀）
+  final String version;
+
+  /// 发行说明（Markdown 原文）
+  final String releaseNotes;
+
+  /// APK 下载地址（assets.browser_download_url）
+  final String apkDownloadUrl;
+
+  /// APK 文件名（如 "社交教练_v1.0.10_arm64_release.apk"）
+  final String apkName;
+
+  /// APK 文件大小（字节）
+  final int apkSize;
+
+  /// Release 发布时间
+  final DateTime publishedAt;
+
+  /// Release HTML 页面（用户可在浏览器打开）
+  final String htmlUrl;
+
+  const GithubReleaseInfo({
+    required this.tagName,
+    required this.version,
+    required this.releaseNotes,
+    required this.apkDownloadUrl,
+    required this.apkName,
+    required this.apkSize,
+    required this.publishedAt,
+    required this.htmlUrl,
+  });
+
+  /// 是否有可下载的 APK 资产
+  bool get hasApkAsset => apkDownloadUrl.isNotEmpty;
+
+  /// APK 大小（MB，保留 1 位小数）
+  String get apkSizeMB {
+    if (apkSize <= 0) return '未知';
+    return (apkSize / 1024 / 1024).toStringAsFixed(1);
+  }
+}
+
+/// 检查结果
+enum UpdateCheckResult {
+  /// 有新版本可用
+  hasUpdate,
+  /// 已是最新版
+  upToDate,
+  /// 检查失败（网络/解析错误）
+  error,
+  /// 最新 Release 没有 APK 资产
+  noAsset,
+}
+
+class UpdateCheckOutcome {
+  final UpdateCheckResult result;
+  final GithubReleaseInfo? releaseInfo;
+  final String? errorMessage;
+  final String currentVersion;
+
+  const UpdateCheckOutcome({
+    required this.result,
+    this.releaseInfo,
+    this.errorMessage,
+    required this.currentVersion,
+  });
+}
+
+class AppUpdateService {
+  AppUpdateService._();
+
+  /// 仓库 owner/name（GitHub 仓库地址：https://github.com/me2vip/relation_app_teaching）
+  static const _repoOwner = 'me2vip';
+  static const _repoName = 'relation_app_teaching';
+
+  /// GitHub Release 最新版 API
+  static const _apiLatestRelease =
+      'https://api.github.com/repos/$_repoOwner/$_repoName/releases/latest';
+
+  /// Release HTML 页面（备用：浏览器下载）
+  static const _releasePageUrl =
+      'https://github.com/$_repoOwner/$_repoName/releases/latest';
+
+  /// 网络超时
+  static const _connectTimeout = Duration(seconds: 15);
+  static const _receiveTimeout = Duration(seconds: 15);
+
+  /// 获取 Dio 实例（带默认 UA / Accept）
+  static Dio _createDio() {
+    return Dio(BaseOptions(
+      connectTimeout: _connectTimeout,
+      receiveTimeout: _receiveTimeout,
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        // GitHub API 要求 UA，否则可能被限流
+        'User-Agent': 'relation-app-teaching-updater/1.0',
+      },
+    ));
+  }
+
+  /// 检查更新
+  ///
+  /// 返回 [UpdateCheckOutcome]：
+  /// - hasUpdate：有新版本，[releaseInfo] 携带新版本信息
+  /// - upToDate：当前已是最新版
+  /// - error：检查失败（网络错误等），[errorMessage] 携带错误信息
+  /// - noAsset：最新 Release 没有 .apk 资产
+  static Future<UpdateCheckOutcome> checkForUpdate() async {
+    final currentInfo = await PackageInfo.fromPlatform();
+    final currentVersion = currentInfo.version;
+
+    final dio = _createDio();
+    try {
+      final resp = await dio.get(_apiLatestRelease);
+      if (resp.statusCode != 200) {
+        return UpdateCheckOutcome(
+          result: UpdateCheckResult.error,
+          errorMessage: 'GitHub API 返回状态码 ${resp.statusCode}',
+          currentVersion: currentVersion,
+        );
+      }
+      final data = resp.data is Map<String, dynamic>
+          ? resp.data as Map<String, dynamic>
+          : <String, dynamic>{};
+      final tagName = (data['tag_name'] ?? '').toString().trim();
+      if (tagName.isEmpty) {
+        return UpdateCheckOutcome(
+          result: UpdateCheckResult.error,
+          errorMessage: '未找到最新 Release tag',
+          currentVersion: currentVersion,
+        );
+      }
+      final version =
+          tagName.toLowerCase().startsWith('v') ? tagName.substring(1) : tagName;
+
+      // 找 APK 资产
+      final assets = (data['assets'] as List?) ?? <dynamic>[];
+      String apkUrl = '';
+      String apkName = '';
+      int apkSize = 0;
+      // 优先选 arm64，其次 universal，再次任意 apk
+      for (final pattern in ['arm64', 'universal', '']) {
+        for (final a in assets) {
+          final name = (a['name'] ?? '').toString();
+          if (!name.toLowerCase().endsWith('.apk')) continue;
+          if (pattern.isNotEmpty &&
+              !name.toLowerCase().contains(pattern.toLowerCase())) {
+            continue;
+          }
+          apkUrl = (a['browser_download_url'] ?? '').toString();
+          apkName = name;
+          apkSize = (a['size'] as num?)?.toInt() ?? 0;
+          break;
+        }
+        if (apkUrl.isNotEmpty) break;
+      }
+
+      // 时间
+      DateTime publishedAt = DateTime.now();
+      final publishedStr = (data['published_at'] ?? '').toString();
+      if (publishedStr.isNotEmpty) {
+        try {
+          publishedAt = DateTime.parse(publishedStr);
+        } catch (_) {}
+      }
+
+      final htmlUrl = (data['html_url'] ?? _releasePageUrl).toString();
+      final releaseNotes = (data['body'] ?? '').toString();
+
+      final releaseInfo = GithubReleaseInfo(
+        tagName: tagName,
+        version: version,
+        releaseNotes: releaseNotes,
+        apkDownloadUrl: apkUrl,
+        apkName: apkName.isEmpty ? 'app-release.apk' : apkName,
+        apkSize: apkSize,
+        publishedAt: publishedAt,
+        htmlUrl: htmlUrl,
+      );
+
+      // 无 APK 资产
+      if (!releaseInfo.hasApkAsset) {
+        return UpdateCheckOutcome(
+          result: UpdateCheckResult.noAsset,
+          releaseInfo: releaseInfo,
+          currentVersion: currentVersion,
+        );
+      }
+
+      // 版本比较
+      final isNewer = _isNewer(releaseInfo.version, currentVersion);
+      return UpdateCheckOutcome(
+        result: isNewer ? UpdateCheckResult.hasUpdate : UpdateCheckResult.upToDate,
+        releaseInfo: releaseInfo,
+        currentVersion: currentVersion,
+      );
+    } on DioException catch (e) {
+      return UpdateCheckOutcome(
+        result: UpdateCheckResult.error,
+        errorMessage: _dioErrorMessage(e),
+        currentVersion: currentVersion,
+      );
+    } catch (e) {
+      return UpdateCheckOutcome(
+        result: UpdateCheckResult.error,
+        errorMessage: '检查更新失败：$e',
+        currentVersion: currentVersion,
+      );
+    }
+  }
+
+  /// 下载 APK 到外部存储
+  ///
+  /// - [onProgress]：(received, total) 接收字节数 / 总字节数
+  /// - 返回下载完成的 APK 文件路径
+  ///
+  /// 保存目录：`getExternalStorageDirectory()/Android/data/<pkg>/files/` 或
+  /// 退化到 `getTemporaryDirectory()`。
+  static Future<File> downloadApk(
+    GithubReleaseInfo release, {
+    void Function(int received, int total)? onProgress,
+    CancelToken? cancelToken,
+  }) async {
+    final dio = Dio(BaseOptions(
+      connectTimeout: _connectTimeout,
+      receiveTimeout: const Duration(minutes: 30),
+    ));
+    final dir = await getExternalStorageDirectory() ??
+        await getTemporaryDirectory();
+    final savePath = '${dir.path}/${release.apkName}';
+    // 删除旧文件
+    final oldFile = File(savePath);
+    if (await oldFile.exists()) {
+      await oldFile.delete();
+    }
+    await dio.download(
+      release.apkDownloadUrl,
+      savePath,
+      onReceiveProgress: onProgress,
+      cancelToken: cancelToken,
+    );
+    return File(savePath);
+  }
+
+  /// 调用系统安装器安装 APK
+  ///
+  /// OpenFilex 内部会自动处理 FileProvider 与未知来源权限。
+  /// 返回值：[OpenResult]（含 type 与 message）。
+  static Future<OpenResult> installApk(File apkFile) async {
+    return await OpenFilex.open(apkFile.path);
+  }
+
+  /// 版本比较：a > b（按 x.y.z 三段式比较）
+  ///
+  /// 例如：
+  ///   1.0.10 > 1.0.9 → true
+  ///   1.0.9  > 1.0.9 → false（相等不算更新）
+  ///   1.2.0  > 1.1.5 → true
+  static bool _isNewer(String a, String b) {
+    final pa = _parseVersion(a);
+    final pb = _parseVersion(b);
+    final len = pa.length > pb.length ? pa.length : pb.length;
+    for (var i = 0; i < len; i++) {
+      final av = i < pa.length ? pa[i] : 0;
+      final bv = i < pb.length ? pb[i] : 0;
+      if (av > bv) return true;
+      if (av < bv) return false;
+    }
+    return false; // 完全相等
+  }
+
+  /// 解析版本号字符串为整数数组
+  static List<int> _parseVersion(String v) {
+    final clean = v.trim().toLowerCase().replaceAll(RegExp(r'^v'), '');
+    final parts = clean.split(RegExp(r'[.\-+]'));
+    return parts.map((s) => int.tryParse(s) ?? 0).toList();
+  }
+
+  /// Dio 错误信息友好化
+  static String _dioErrorMessage(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+        return '连接超时，请检查网络后重试';
+      case DioExceptionType.sendTimeout:
+        return '发送请求超时';
+      case DioExceptionType.receiveTimeout:
+        return '接收响应超时';
+      case DioExceptionType.connectionError:
+        return '网络连接失败，请检查网络';
+      case DioExceptionType.badResponse:
+        final code = e.response?.statusCode ?? 0;
+        if (code == 403 || code == 429) {
+          return 'GitHub API 限流，请稍后再试';
+        }
+        return '服务器返回错误（$code）';
+      case DioExceptionType.cancel:
+        return '已取消';
+      default:
+        return '下载失败：${e.message}';
+    }
+  }
+}

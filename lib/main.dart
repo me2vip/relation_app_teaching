@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'core/theme/app_style_system.dart';
 import 'core/utils/app_version_info.dart';
 import 'core/utils/pdf_exporter.dart';
+import 'core/widgets/update_dialog.dart';
 import 'features/floating_window/widgets/social_guide/teaching_level_entry_widget.dart';
 
 void main() {
@@ -52,6 +53,11 @@ class TeachingHomePage extends StatelessWidget {
         title: const Text('社交教学关卡'),
         centerTitle: true,
         actions: [
+          IconButton(
+            tooltip: '检查更新',
+            icon: const Icon(Icons.system_update_rounded),
+            onPressed: () => UpdateDialog.show(context),
+          ),
           IconButton(
             tooltip: '导出知识手册',
             icon: const Icon(Icons.ios_share_rounded),
@@ -121,6 +127,25 @@ class TeachingHomePage extends StatelessWidget {
             Text('QQ：3125075915',
                 style: TextStyle(fontSize: 13, color: Colors.grey[800])),
           ],
+        ),
+        const SizedBox(height: 12),
+        const Divider(),
+        const SizedBox(height: 4),
+        // 应用内检查更新入口：调用 GitHub Release API
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              UpdateDialog.show(context);
+            },
+            icon: const Icon(Icons.system_update_alt_rounded, size: 18),
+            label: const Text('检查更新'),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
         ),
       ],
     );
