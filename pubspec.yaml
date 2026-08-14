@@ -4,7 +4,9 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.12.2
+  # 放宽 SDK 约束：同时支持较新的 Dart 3.12+，也允许老一点的 3.5+（CI / 本地各版本都能跑）
+  # 如果升级 Flutter 后报约束过宽，可改回 ^3.12.0
+  sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
   flutter:
