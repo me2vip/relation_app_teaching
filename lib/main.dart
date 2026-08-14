@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/theme/app_style_system.dart';
+import 'core/utils/app_version_info.dart';
 import 'core/utils/pdf_exporter.dart';
 import 'features/floating_window/widgets/social_guide/teaching_level_entry_widget.dart';
 
@@ -74,19 +75,32 @@ class TeachingHomePage extends StatelessWidget {
     );
   }
 
-  /// 关于页面
-  static void _showAboutDialog(BuildContext context) {
+  /// 关于页面：版本号从 pubspec.yaml 动态读取（通过 package_info_plus）
+  /// 改版本只需改 pubspec.yaml 的 version 字段，所有地方自动同步。
+  static Future<void> _showAboutDialog(BuildContext context) async {
+    final AppVersionInfo info = await AppVersionInfo.load();
+
+    if (!context.mounted) return;
+
     showAboutDialog(
       context: context,
-      applicationName: '社交教练',
-      applicationVersion: '1.0.0',
-      applicationLegalese: '© 2026 社交教练',
-      applicationIcon: const FlutterLogo(),
+      applicationName: info.appName,
+      applicationVersion: info.display,
+      applicationLegalese: '© 2026 ${info.appName}',
+      applicationIcon: const FlutterLogo(size: 48),
       children: [
         const SizedBox(height: 16),
         const Text(
           '社交技能分级教学与模拟对话练习 App',
           style: TextStyle(fontSize: 13),
+        ),
+        // 构建号辅助说明（小字灰色，版本+6 这种格式）
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            '构建号 ${info.buildNumber} · ${info.full}',
+            style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+          ),
         ),
         const SizedBox(height: 12),
         const Divider(),
