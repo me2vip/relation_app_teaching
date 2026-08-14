@@ -7,9 +7,17 @@ import 'package:flutter/material.dart';
 import 'teaching_level_system.dart';
 import 'knowledge_extensions.dart';
 
+/// QType 类型别名，兼容 QuestionType
+class QType {
+  static const single = QuestionType.singleChoice;
+  static const multi = QuestionType.multipleChoice;
+  static const truefalse = QuestionType.trueFalse;
+}
+
 final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
   // ===================== K049 男生约会升级指南 =====================
   'K049': KnowledgeExtensionBundle(
+    knowledgeId: 'K049',
     keyPoints: const [
       KnowledgeKeyPoint(
         title: '约会前的基本盘',
@@ -90,7 +98,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 准备一个备选方案（万一原店人多/排队）',
           'D. 提前问她"我们去哪家吃，你决定"',
         ],
-        answer: ['D'],
+        correctIndices: [3],
         type: QType.single,
         explanation: 'D 是错的——她要的是你带她体验，不是她来安排一切。选个自己熟的地方+备选，你不紧张她就不紧张。',
       ),
@@ -103,7 +111,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 第一次见面就想牵手',
           'D. 一直不碰，让她主动',
         ],
-        answer: ['B'],
+        correctIndices: [1],
         type: QType.single,
         explanation: 'B 是对的——从无压力的低接触开始，观察她不躲再升级。第一次就直接想牵手=没分寸，一直不碰=你没吸引力。',
       ),
@@ -116,7 +124,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 第一次吃饭就送她贵重礼物',
           'D. 冷场了就掏手机刷朋友圈解围',
         ],
-        answer: ['A', 'B', 'C', 'D'],
+        correctIndices: [0, 1, 2, 3],
         type: QType.multi,
         explanation: 'ABCD 全是禁忌。查户口=压迫感；炫耀=你不自信；贵重礼物=给压力；手机救场=你没分寸。把这些全避开，你已经比 90% 的男生约会表现好了。',
       ),
@@ -180,6 +188,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
 
   // ===================== K050 男生追求心法 =====================
   'K050': KnowledgeExtensionBundle(
+    knowledgeId: 'K050',
     keyPoints: const [
       KnowledgeKeyPoint(
         title: '吸引力三要素：价值+可得性+投入度',
@@ -252,7 +261,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 你们互相投入的钱一样多',
           'D. 她答应做你女朋友之后才算投入',
         ],
-        answer: ['B'],
+        correctIndices: [1],
         type: QType.single,
         explanation: 'B 是正确答案。投入度是"她在你身上花了什么"。她花时间想你、打扮见你、猜你、帮你做事 —— 这些才是投入。你单方面投入越多，她越不在乎。',
       ),
@@ -260,7 +269,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
         id: 'K050-q2',
         question: '（判断）追女生最有效的方式是"一直对她好，感动她，让她知道你是最爱她的人"。',
         options: ['A. 正确', 'B. 错误'],
-        answer: ['B'],
+        correctIndices: [1],
         type: QType.truefalse,
         explanation: '错误。"对她好"是基础不是加分项。让她选择你的是：吸引力（你本身有魅力）+ 可得性（她是特殊的）+ 她的投入度。你感动她100次，不如她心动+投入1次。',
       ),
@@ -316,6 +325,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
 
   // ===================== K051 女生约会心法 =====================
   'K051': KnowledgeExtensionBundle(
+    knowledgeId: 'K051',
     keyPoints: const [
       KnowledgeKeyPoint(
         title: '约会前：状态比装扮重要',
@@ -387,7 +397,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 约会结束到家，你主动发"今天聊很开心，下次你推荐那家烤串记得带我"',
           'D. 第一次吃饭他要买单，你一定要AA到分毫不差',
         ],
-        answer: ['C'],
+        correctIndices: [2],
         type: QType.single,
         explanation: 'C 是对的——既肯定了他今天的表现（给他确定性），又留下了下次约会的伏笔。A 太早有压力；B 是敷衍；D 让男生觉得你不想欠他=你对他没兴趣。',
       ),
@@ -443,6 +453,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
 
   // ===================== K052 女生反拿捏 =====================
   'K052': KnowledgeExtensionBundle(
+    knowledgeId: 'K052',
     keyPoints: const [
       KnowledgeKeyPoint(
         title: '短择4类信号：中2个立刻拉黑',
@@ -499,7 +510,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 他约你3次你答应2次，第4次你主动约他一次',
           'D. 刚见一次面你就把自己所有事都告诉他',
         ],
-        answer: ['C'],
+        correctIndices: [2],
         type: QType.single,
         explanation: 'C 是正确的——黄金 3:1 法则：他约3次你主动1次，同时留1/3次不答应。这样他既知道"追下去有结果"，同时不会觉得你太容易得到。',
       ),
@@ -512,7 +523,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 永远忙，但你朋友圈发自拍他立刻评论',
           'D. 你不知道他住哪、做什么、感情状况，他也从来不主动说',
         ],
-        answer: ['A', 'B', 'C', 'D'],
+        correctIndices: [0, 1, 2, 3],
         type: QType.multi,
         explanation: 'ABCD 全中。中2个以上就是高风险，中3个立刻拉黑。不要心存侥幸：他不会"因为你特别"就浪子回头，你只是他短择名单里的其中一个。',
       ),
@@ -568,6 +579,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
 
   // ===================== K053 异性心理差异 =====================
   'K053': KnowledgeExtensionBundle(
+    knowledgeId: 'K053',
     keyPoints: const [
       KnowledgeKeyPoint(
         title: '沟通目的差异：连接 vs 解决',
@@ -633,7 +645,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 说"我看你今天好像挺累的，你先歇着，我去做点吃的，想聊时跟我说"，然后安静陪在旁边做自己的事',
           'D. 打电话给他兄弟让他兄弟劝他',
         ],
-        answer: ['C'],
+        correctIndices: [2],
         type: QType.single,
         explanation: 'C 正确。男生进洞穴不是"他不爱你了"，是他觉得把坏情绪给你=没能力的表现。你给空间+表达关心+不强迫他说话，等他自己出来了他会更感激你。',
       ),
@@ -689,6 +701,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
 
   // ===================== K054 表白与确定关系 =====================
   'K054': KnowledgeExtensionBundle(
+    knowledgeId: 'K054',
     keyPoints: const [
       KnowledgeKeyPoint(
         title: '4个必确认信号：缺一个不要表白',
@@ -745,7 +758,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
           'C. 第三次约会气氛到位时，当面说具体细节+仪式感问她',
           'D. 喝了酒打电话表白，成功就成不成功就当醉话',
         ],
-        answer: ['C'],
+        correctIndices: [2],
         type: QType.single,
         explanation: 'C 是对的。当面说+具体细节+仪式感=最真诚成功率最高。A 文字没温度；B 道德绑架=被拒率99%；D 喝了酒=你不够认真。',
       ),
@@ -753,7 +766,7 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
         id: 'K054-q2',
         question: '（判断）表白后被拒绝了，应该拉黑对方、删除好友、朋友圈大段emo、或者质问对方"我哪里不好"。',
         options: ['A. 正确', 'B. 错误'],
-        answer: ['B'],
+        correctIndices: [1],
         type: QType.truefalse,
         explanation: '错误。正确做法：笑着体面接受→主动拉开一点距离→继续做好你自己。你变更好，对方才会后悔；你发疯，只会让对方觉得"还好没答应ta"。',
       ),
@@ -801,6 +814,322 @@ final Map<String, KnowledgeExtensionBundle> kGenderKnowledgeExtensions = {
             example: '①过马路自然牵手→她不躲→全程牵着；②下次见面自然喊她"宝宝/亲爱的"，看她答应不答应；③答应了之后你补一个正式表白："上次我们正式在一起我还没问过你呢，你愿意当我女朋友吗？"（仪式感补上）',
             tip: '很多长久的关系都是这样先成了再确认的。行动升级比口头表白，更不容易被拒绝。',
             keywords: ['行动先到位', '名分后补', '风险最低'],
+          ),
+        ],
+      ),
+    ],
+  ),
+
+  // ===================== K055 隐性需求挖掘 =====================
+  'K055': KnowledgeExtensionBundle(
+    knowledgeId: 'K055',
+    keyPoints: const [
+      KnowledgeKeyPoint(
+        title: '核心原则：交换比索取有效',
+        content: '你想了解对方一个信息，先主动暴露一个自己的（轻量级）信息→回报心理驱动下对方自然回你。比例：问1个问题→对方回答→你分享1个同级别的自己的信息。',
+        icon: Icons.autorenew_rounded,
+        importance: '核心',
+      ),
+      KnowledgeKeyPoint(
+        title: '场景代入 + 朋友借力',
+        content: '想知道A，不要直接问A。问A的假设场景（"如果你有两天假你更愿意…"）→反推A；或者借"我朋友"的事问TA的真实观点→TA不会觉得被打探，自然说出真实判断。',
+        icon: Icons.theater_comedy_rounded,
+        importance: '核心',
+      ),
+      KnowledgeKeyPoint(
+        title: '横向延伸代替纵向追问',
+        content: '纵向："你做什么？→哪里人？→多大？"=查户口=防御。横向："你做HR→是不是每天见好多人？→那你看人特别准吧？→有没有遇到过离谱的面试者？"→从职业挖到价值观、识人标准、故事。',
+        icon: Icons.call_split_rounded,
+        importance: '重要',
+      ),
+      KnowledgeKeyPoint(
+        title: '自我暴露分级 + 沉默复述',
+        content: '1级事实→2级偏好→3级观点→4级脆弱。你暴露到哪一级，对方就愿意回复到哪一级。说完一段后：停2秒+点头+复述关键词（升调）"冷战？"→对方自动说得更多。',
+        icon: Icons.layers_rounded,
+        importance: '重要',
+      ),
+      KnowledgeKeyPoint(
+        title: '不暴露自己的法门',
+        content: '不要一次说光全部；回答具体问题时给事实+一句话情绪就停；不想回答就用"玩笑+反问"把话题抛回去；永远留一半。神秘感+你愿意听TA说话=永远有吸引力。',
+        icon: Icons.lock_outline_rounded,
+        importance: '极重要',
+      ),
+    ],
+    practices: const [
+      KnowledgePractice(
+        id: 'K055-p1',
+        scenario: '刚认识不久，你想知道TA有没有对象/喜欢什么类型，但不想直接查户口',
+        contactPersona: '礼貌但有防御的TA，不熟不会说私事',
+        openingMessage: '（聊到周末话题，对方说"我周末一般在家待着"）',
+        goodKeywords: ['朋友', '选择题', '场景', '假设', '你更愿意', '怎么看', '我有个朋友'],
+        referenceReply: '"说起来我有个朋友最近纠结死了——有人给她介绍了一个对象，她纠结是先在微信聊还是直接约见面。换你是她，你更愿意哪种方式？你觉得聊多久见面比较合适？"（借第三方，反推TA自己的节奏和偏好）',
+        tip: '不要问"你有没有对象""你喜欢什么样的"。借第三方的事+让TA做选择→TA自然说出自己的真实立场，你记住了就是答案。',
+      ),
+      KnowledgePractice(
+        id: 'K055-p2',
+        scenario: '对方说"我跟前男友/前女友分手是因为性格不合"，你想知道更深层的分手原因（但又不想显得你在挖八卦）',
+        contactPersona: '有感情经历，不想被深挖过去但愿意适当聊',
+        openingMessage: '"上一段感情，我们就是性格不合吧，也说不清谁对谁错。"',
+        goodKeywords: ['冷战？', '复述', '停2秒', '点头', '关键词', '嗯？', '然后呢'],
+        referenceReply: '（停2秒，点点头，语气好奇升调）"冷战？"（只复述关键词）…（对方开始说更多之后，再轻轻点头）"哦？三天不联系？那种感觉特别难受吧？"…',
+        tip: '咨询师绝招：关键词复述+沉默。不要急着接话不要追问，你给一个关键词升调+2秒沉默，对方会忍不住自己说得越来越深。',
+      ),
+      KnowledgePractice(
+        id: 'K055-p3',
+        scenario: 'TA问了你一个你不想回答得太细的问题："你之前谈过几段？"，你不想硬答也不想撒谎，同时还想知道TA的看法',
+        contactPersona: '有点好奇你的感情史，你不想答太细还想反挖TA',
+        openingMessage: '"对了，你之前谈过几段恋爱呀？"',
+        goodKeywords: ['哈哈', '定义', '那得看', '你呢', '你觉得', '算正常', '反问', '玩笑'],
+        referenceReply: '（笑一笑）"哈哈那得看\'谈过\'的定义是什么了——吃了三顿饭算吗？认真交往过的确实不多。你呢？你觉得谈过几段算比较正常的范围？"',
+        tip: '不想回答的问题：玩笑带过+反问+让TA先说。你不用真的回答清楚，TA说的那个TA的标准，才是你真正想知道的信息。',
+      ),
+      KnowledgePractice(
+        id: 'K055-p4',
+        scenario: '你想知道TA对"钱/消费观"的态度，这关系到以后合不合适，但直接问"你月薪多少/花多少"太离谱',
+        contactPersona: '对收入/消费比较敏感的TA，不会跟不熟的人谈钱',
+        openingMessage: '（聊到最近热门的旅游话题）…',
+        goodKeywords: ['二选一', '选项', '你是那种', '更愿意', '朋友', '他女朋友', '怎么看'],
+        referenceReply: '"对了我一直特别想问——出去旅游，你是那种愿意花大钱住特别好的酒店体验好一点，还是觉得酒店就睡一觉随便就行、把钱花在吃和玩上？"（二选一，不用想太多，随便选一个都等于告诉你TA的消费观）',
+        tip: '不要给开放问题（"你平时喜欢什么？"），给二选一/三选一。对方不需要思考+不觉得被审问，无论选哪个你都得到了有效信息。',
+      ),
+    ],
+    questions: const [
+      KnowledgeQuestion(
+        id: 'K055-q1',
+        question: '以下哪种挖掘对方信息的方式，最不暴露自己、对方也最不设防？',
+        options: [
+          'A. 直接问："你有没有对象？你喜欢什么样的？"',
+          'B. 先分享自己一个同级别的轻量信息，再让对方也说一个',
+          'C. 连续问5个："多大→哪里人→做什么→工资→感情状况"',
+          'D. 翻TA三年朋友圈然后在聊天中把挖出来的信息假装"刚好提到"',
+        ],
+        correctIndices: [1],
+        type: QType.single,
+        explanation: 'B 正确——交换比索取有效。你先暴露一个同级别的自己的信息，对方在回报心理下自然回你。A是查户口，C是连环5问压迫感爆炸，D是stalker行为让对方后怕。',
+      ),
+      KnowledgeQuestion(
+        id: 'K055-q2',
+        question: '（多选）以下哪些属于"不暴露自己+反挖对方"的有效技巧？',
+        options: [
+          'A. 场景代入提问："如果你有两天假，更愿意宅家还是出门？"（反推生活状态）',
+          'B. "我有个朋友"借力：借第三方的事问TA的真实观点',
+          'C. 话题横向延伸：从"职业"挖到"识人标准"挖到"价值观"',
+          'D. 先给二选一/三选一选项，让对方选一个，降低思考和防御成本',
+        ],
+        correctIndices: [0, 1, 2, 3],
+        type: QType.multi,
+        explanation: 'ABCD 全对。这4个就是本篇的核心技巧，再加上"自我暴露分级+沉默复述+玩笑反问+永远留一半"这6个一起用，你可以在完全不暴露自己的情况下，把对方了解得清清楚楚。',
+      ),
+      KnowledgeQuestion(
+        id: 'K055-q3',
+        question: '（判断）对方说完一段话后，应该立刻接话、立刻再问一个新问题，避免任何冷场和沉默。',
+        options: ['A. 正确', 'B. 错误'],
+        correctIndices: [1],
+        type: QType.truefalse,
+        explanation: '错误。正确做法：对方说完→停2秒→微微点头→复述最后一个关键词（升调）"冷战？"→对方会自动说得越来越深。你急着接话=打断了对方的深层表达，也失去了免费获取更多信息的机会。',
+      ),
+    ],
+    stepGuides: const [
+      KnowledgeStepGuide(
+        title: '一次完整聊天：从陌生到深度了解（你全程不暴露核心）',
+        steps: [
+          KnowledgeGuideStep(
+            step: 1,
+            title: '开场：安全话题 + 自我暴露1级（事实）',
+            instruction: '从一个无压力的安全话题切入（最近的电影/店/天气），你先分享一个1级事实信息，让对方放松。',
+            example: '你："你最近有没有看那个《XX》电影？我朋友说挺好看的，我还没来得及去看——我最近下班特别晚，每天回到家只想躺着。"（1级事实：我下班晚）',
+            tip: '你先说一个不痛不痒的事实，对方才不会觉得"只有我在说"。回报心理开始生效。',
+            keywords: ['安全话题', '1级事实', '先分享'],
+          ),
+          KnowledgeGuideStep(
+            step: 2,
+            title: '横向延伸：从安全话题 → 2级偏好 + 场景代入',
+            instruction: '对方回答后，不要纵向追问细节，横向延伸到偏好，再用场景代入，反推TA的生活状态和价值观。',
+            example: 'TA："我也没看，我最近也挺忙的。" 你："忙是好事呀。不过我一直想问个好玩的——如果你真的有完整两天假，你是更喜欢在家躺平追剧叫外卖，还是一定要出门跑一跑？"',
+            tip: '二选一的场景代入，TA不用想怎么回答，也不会觉得被查户口。无论选A还是选B，你都得到了关键信息：TA空不空、平时生活节奏、是不是一个人。',
+            keywords: ['横向延伸', '二选一', '场景代入'],
+          ),
+          KnowledgeGuideStep(
+            step: 3,
+            title: '"朋友借力法"探TA的感情观/婚恋观',
+            instruction: '用"我朋友"的一个难题，问TA的看法。TA不会觉得你是在打探TA的立场，自然说出真实判断。',
+            example: '你："对了说起来我有个朋友，她跟一个男生认识两周，那男生就跟她表白了。她纠结得要死，不知道答应还是再等等。你怎么看？你觉得认识多久确定关系比较合适？"',
+            tip: '把TA的回答记住了。TA觉得"两周太快至少3个月"=你追TA的时候表白不要早于3个月。TA的判断=TA自己遇到同样情况时的做法。',
+            keywords: ['朋友借力', '真实观点', '反推TA的立场'],
+          ),
+          KnowledgeGuideStep(
+            step: 4,
+            title: 'TA说故事时：关键词复述 + 2秒沉默，让TA越说越深',
+            instruction: 'TA说到某段具体经历/故事时：停2秒→点头→复述最后一个关键词（升调），不要问新问题。',
+            example: 'TA："我上一段就是因为他永远冷战，吵架了三天不联系我。" 你：（停2秒，好奇升调）"冷战？" → TA会自动开始说更多细节，你不用问就知道了TA对上一段的真实痛点、TA对感情的底线。',
+            tip: '这一条最有用。你看起来是在认真听，其实你一分钱力气没花，TA自己把所有底都交给你了。',
+            keywords: ['关键词复述', '2秒沉默', '自动说更多'],
+          ),
+          KnowledgeGuideStep(
+            step: 5,
+            title: '你收尾：点到为止 + 玩笑反问 + 不回答太细',
+            instruction: '聊得差不多了，TA反过来问你深入问题时：不要一次说光，点到为止+玩笑反问抛回去，让TA继续说。',
+            example: 'TA："那你呢？你之前谈过几段？" 你：（笑）"哈哈那得看\'谈过\'的定义了，认真交往过的不多。你呢？你觉得几段算比较正常的？"（你没真答，还反让TA说了TA的标准。）',
+            tip: '永远留一半。你说得越少，TA越想了解你；你越愿意听TA说，TA越觉得你特别懂TA。',
+            keywords: ['点到为止', '玩笑反问', '永远留一半'],
+          ),
+        ],
+      ),
+    ],
+  ),
+
+  // ===================== K056 特殊人群社交 =====================
+  'K056': KnowledgeExtensionBundle(
+    knowledgeId: 'K056',
+    keyPoints: const [
+      KnowledgeKeyPoint(
+        title: '先区分4种类型，对症下药',
+        content: '社恐型（社交累+不回消息后道歉+见面话多）→降低压力给安全感；慢热型（回复稳但从不主动+拒绝你几次因为还不熟）→拉长时间用时间证明靠谱；极度内向不活跃型（不发朋友圈+生活固定+只跟1-2个朋友联系）→从兴趣切入+线下面对面；被动型（你主动就有好回复但99%你先开口）→固定频率+偶尔后撤给主动窗口。',
+        icon: Icons.category_rounded,
+        importance: '核心',
+      ),
+      KnowledgeKeyPoint(
+        title: '低压消息 + 轻量短约会',
+        content: '消息=轻量、低回复成本、给免回牌："想到你了发一下，你忙不用回"。约会=短（<1小时）+明确结束时间+TA方便的位置："周六下午2-4点我刚好去你附近那家书店，有空吗？就坐20分钟喝个东西就好。"',
+        icon: Icons.airline_seat_flat_angled_rounded,
+        importance: '核心',
+      ),
+      KnowledgeKeyPoint(
+        title: '节奏：1次见面→2-3天消失→再找1次',
+        content: '正常人约完第二天就找，但对这类人不要。TA社交能量是"充电2小时通话5分钟"。约完消失2-3天，让TA消化见面、回味你、想找你又忍住。3天后你再找，回复质量高非常多。',
+        icon: Icons.timer_rounded,
+        importance: '重要',
+      ),
+      KnowledgeKeyPoint(
+        title: '稳定低频节奏 + 只聊安全话题',
+        content: '每周2次每次10-15条消息，固定时段；见面每10-14天一次1小时。连续4-6周稳定，TA把你放进"熟悉的人"。不要急着聊重话题，先找到TA一聊就停不下来的那个安全话题（回复字数突然变多那个），每次只聊这个。',
+        icon: Icons.layers_rounded,
+        importance: '重要',
+      ),
+      KnowledgeKeyPoint(
+        title: '3个月止损 + 不逼不比较',
+        content: '不要逼TA发朋友圈、逼TA主动、逼TA确定关系——TA最讨厌被逼迫改变生活方式。不要拿TA跟别人对象比：TA的爱不是秒回消息，是答应你的事一定做到、你说过的每句话TA都记得。时间上限：3个月没实质性进展→立刻止损。',
+        icon: Icons.shield_rounded,
+        importance: '极重要',
+      ),
+    ],
+    practices: const [
+      KnowledgePractice(
+        id: 'K056-p1',
+        scenario: '你加了一个慢热内向型的TA，朋友圈半年一条，之前聊过两次都很客套。这次你想发消息给TA，怎么发不让TA有压力？',
+        contactPersona: '慢热、不活跃、不主动、不发朋友圈的TA，看到大段消息会压力大不想回',
+        openingMessage: '（你准备发这一条消息，要低压力+有理由+给免回牌）',
+        goodKeywords: ['具体', '关联TA的兴趣', '你忙不用回', '想到你了', '轻量', '图片', '哈哈哈'],
+        referenceReply: '"我刚才路过一家手办店，橱窗里那个皮卡丘跟你头像那个简直一模一样，我拍了张照片（附图），想到你了发一下。你忙不用回哈哈哈～"',
+        tip: '低压力消息三要素：具体一件眼前的小事+关联TA的一个你知道的小细节+给"免回牌"。TA回不回都没压力，反而大概率会回你，因为你没逼TA。',
+      ),
+      KnowledgePractice(
+        id: 'K056-p2',
+        scenario: '你想约一个社恐/极度不活跃的TA见面。你之前约TA"周末一起吃饭看电影"被TA说"周末有事"婉拒了。这次你换一个约法。',
+        contactPersona: '社恐，对"出去玩一天""吃饭逛街"这种长时间社交有压力，直接拒绝',
+        openingMessage: '（你发邀约，要：短、轻、有明确结束时间、TA方便的位置）',
+        goodKeywords: ['刚好', '附近', '你公司/你家', '几点到几点', '20分钟', '喝个东西', '坐一下', '不用特意打扮'],
+        referenceReply: '"我下周三下午刚好要去你家附近那条路办点事，大概3点到4点之间有空。要不要出来坐20分钟在路口那家咖啡店喝个东西？就简单见一下，喝完你直接回家，不用特意打扮的那种。"',
+        tip: '约TA三要素：1. 有"刚好顺路"的理由（不是专程为了见TA，TA心理压力小）；2. 有明确结束时间和时长（20分钟，不是"玩一天"）；3. 位置在TA最方便的地方（不用TA跑远）。答应率高10倍。',
+      ),
+      KnowledgePractice(
+        id: 'K056-p3',
+        scenario: '你跟慢热TA约会完（1小时短约会），第二天你的朋友都说"赶紧找TA趁热打铁"。但你知道对慢热型不能这样，你要怎么做？',
+        contactPersona: '刚见完一次面的慢热型TA，见面聊得还行但线上从来不主动',
+        openingMessage: '（约会后第二天，你要不要立刻找TA？怎么找？节奏怎么控制？）',
+        goodKeywords: ['2-3天', '不联系', '等TA消化', '第三天', '具体', '见面时', '那件小事', '不用聊很久'],
+        referenceReply: '（第一天第二天都不找TA，让TA有时间消化见面、回味你、想你又忍住。第三天你再发）"嗨～前天我们聊到那个说老板坏话的小哥，我今天居然在公司楼下又碰到他了哈哈哈，真是太巧了。"',
+        tip: '慢热型能量很低，你约完立刻第二天就找=TA的社交电量还没恢复好，回复质量低甚至不回。消失2-3天再找，用见面时共同的一个小细节开场，TA立刻就想起那次见面的轻松氛围，回复质量高很多。',
+      ),
+      KnowledgePractice(
+        id: 'K056-p4',
+        scenario: '你已经连续主动找TA快1个月了，TA每次回复质量都不错、会接你的梗，但100次对话有99次都是你先开口。你想测试TA到底对你有没有兴趣，要不要后撤、怎么撤？',
+        contactPersona: '被动型TA，习惯等别人主动、不擅长先开口、但是你找TA就有好好回复',
+        openingMessage: '（你想做一次轻微后撤+给TA一个主动的窗口，而不是突然消失）',
+        goodKeywords: ['让TA选', '你看你', '哪个时间段', '等你有空了', '你喊我', '轻微后撤', '不要突然消失'],
+        referenceReply: '（平时每周找TA2次，这周只找1次而且聊两句就主动结束；然后约见面时这样说）"我下周二到周五下午都有空，你看你哪个时间段方便？你来定时间我来定位置。"（结束后再说）"对了前几天我们聊的那个XX展览我还想看，等你有空了你喊我，我立刻就去。"',
+        tip: '轻微后撤+给TA一个主动的理由。不是"你为什么从来不主动"（指责=TA下次更不敢），而是让TA来选时间、让TA来喊你看展览（给台阶）。如果TA选了时间/TA真的喊了你一次→TA对你有兴趣。3次后撤都没任何回应→真的对你没兴趣，止损。',
+      ),
+    ],
+    questions: const [
+      KnowledgeQuestion(
+        id: 'K056-q1',
+        question: '约一个社恐/内向/不发朋友圈的人见面，以下哪种邀约方式，TA答应的概率最高？',
+        options: [
+          'A. "周末有空吗？一起吃饭逛街玩一天吧！"',
+          'B. "我下周三下午3-4点刚好要去你家附近办点事，就路口那家咖啡店坐20分钟喝个东西，有空吗？喝完你直接回家那种～"',
+          'C. "我买了两张周末的演唱会门票，一起去吧！别告诉我你没空哦！"',
+          'D. 连续给TA发三个不同的约会方案，让TA选一个。',
+        ],
+        correctIndices: [1],
+        type: QType.single,
+        explanation: 'B 对的。对这类人，答应率=压力的倒数。短（20分钟）+ 有明确结束时间 + 顺路理由 + 最方便的位置 + 不用特意打扮 = TA的心理压力最低 = 答应率最高。A玩一天=巨大压力；C演唱会=人多嘈杂+时间长+你替TA做了决定=直接拒；D给太多选择=TA要做决定=压力大=都不选。',
+      ),
+      KnowledgeQuestion(
+        id: 'K056-q2',
+        question: '（多选）跟慢热/社恐/不主动的人相处，以下做法是正确的有？',
+        options: [
+          'A. 约完一次面，立刻2-3天不联系，给TA消化和回味的时间',
+          'B. 每周2次每次10-15条消息的固定低频节奏，连续4-6周，让TA习惯你的存在',
+          'C. 找到TA一聊就停不下来的那个"安全话题"，每次从这里切入，不要急着聊重话题',
+          'D. 经常对TA说："为什么每次都是我找你？你就不能主动一次吗！"',
+        ],
+        correctIndices: [0, 1, 2],
+        type: QType.multi,
+        explanation: 'ABC 正确。D 是最错误的做法——指责"你不主动"=让TA觉得主动这件事=会被你挑毛病→下次TA更不敢主动了。正确的做法不是逼TA主动，是接受TA本来的样子，用时间和稳定证明你靠谱，偶尔后撤给TA一个主动的窗口（不是逼）。',
+      ),
+      KnowledgeQuestion(
+        id: 'K056-q3',
+        question: '（判断）跟这类人相处，3个月时间上限的意思是：无论TA有没有表示，我必须在3个月内让TA跟我确定关系，不然就浪费时间。',
+        options: ['A. 正确', 'B. 错误'],
+        correctIndices: [1],
+        type: QType.truefalse,
+        explanation: '错误。3个月时间上限意思是：给自己3个月，如果3个月了TA不会主动找你一次、任何肢体接触都躲、提到确定关系就回避→说明TA真的不喜欢你（只是享受你对TA好）→立刻止损。如果3个月里有进展（虽然慢但在往前走）→继续，不要急着逼确定关系。',
+      ),
+    ],
+    stepGuides: const [
+      KnowledgeStepGuide(
+        title: '跟慢热/社恐/不发朋友圈/不主动的人，从认识→熟悉→暧昧的3个月完整节奏',
+        steps: [
+          KnowledgeGuideStep(
+            step: 1,
+            title: '第1-2周：低压力接触 + 找到安全话题',
+            instruction: '每周2次消息，每次10条以内。消息三要素：具体小事+关联TA的小细节+给免回牌。从10个不同话题中找出TA的"安全话题"（回复字数突然变多/用感叹号/主动说细节那个）。',
+            example: '消息："我刚才路过那家你说过的日式拉面店，居然真的排长队！（附图）想到你了发一下，你忙不用回哈哈哈～"',
+            tip: '不要急着约见面。先在线上让TA对你的消息有"期待感"→"他发的消息都挺轻松，没压力"。找到安全话题=后面你每次聊这个TA都愿意多跟你说两句。',
+            keywords: ['低压消息', '免回牌', '安全话题'],
+          ),
+          KnowledgeGuideStep(
+            step: 2,
+            title: '第2-4周：第一次短约会（20-60分钟）',
+            instruction: '约TA：顺路理由+短时长+明确结束时间+TA最方便的位置。约会只聊安全话题+眼前具体的事，绝对不聊感情/未来/重话题。约会结束直接送TA到方便的地方，不邀约第二场地。',
+            example: '"我周六下午刚好去你公司附近那家书店买本书，大概2点到4点之间，你有空吗？就出来20分钟在楼下奶茶店坐一下就行，喝完你直接回去继续忙～"',
+            tip: '第一次见面越短越轻越好。TA心里会想："哎跟这个人见面好像没那么累？"→下次你再约，TA就没那么抗拒了。',
+            keywords: ['短约会', '顺路理由', '明确结束时间'],
+          ),
+          KnowledgeGuideStep(
+            step: 3,
+            title: '第4-8周：节奏固定 + 2次/周消息 + 每10-14天一次见面',
+            instruction: '节奏严格固定：每周2次消息（周三晚+周日下午），每次10-15条；每10-14天一次1小时短约会。每次约完立刻消失2-3天，让TA消化。只聊安全话题+见面的共同记忆。',
+            example: '（约完第三天再找）"对了上次我们喝的那家的抹茶拿铁，我昨天自己又去点了一次，感觉还是那天我们一起喝的时候比较好喝哈哈。"',
+            tip: '"稳定"对慢热型来说=安全感=吸引力。你今天找10次明天消失3天=TA觉得你不靠谱=直接关门。你每周2次固定找，连续4周=TA开始习惯你的存在=把你放进"熟悉的人"名单。',
+            keywords: ['固定节奏', '每周2次', '每10-14天见面'],
+          ),
+          KnowledgeGuideStep(
+            step: 4,
+            title: '第8-10周：轻微后撤一次 + 给TA主动窗口',
+            instruction: '一直都是你主动TA会习惯。这时候轻微后撤一次：平时每周找2次→这周只找1次而且聊2句就主动撤；约见面让TA选时间；结束时说一句让TA主动找你的话。',
+            example: '约会结束："今天聊的那个XX电影我还想看，等你有空了你喊我，我立刻就去。"（给TA一个具体的、有理由的主动找你的借口）',
+            tip: '不要突然彻底消失（TA会觉得你放弃了然后也放弃）。要：轻微后撤+给一个TA主动找你的具体理由。如果TA真的主动了一次→恭喜你，TA对你有感觉了。',
+            keywords: ['轻微后撤', '给TA主动窗口', '具体理由'],
+          ),
+          KnowledgeGuideStep(
+            step: 5,
+            title: '第10-12周：3个月自检 + 推进 or 止损',
+            instruction: '3个月时间到，按3条检查：①TA会主动找你哪怕1次？②肢体接触TA不躲甚至贴回？③聊到暧昧/确定关系话题TA不回避？3条中2条→继续推进；1条及以下→立刻止损。',
+            example: '自我盘点：①上周TA主动发消息问我"你上次说的那个店叫什么来着？"→是；②过马路我扶了一下TA手臂TA没躲→是；③我说"我朋友都说我们俩挺配的"TA只是笑了没说"别乱说"→是。3/3，可以继续推进。',
+            tip: '再慢热的人，3个月也能判断出自己是不是喜欢一个人。3个月还没任何表示，就是不喜欢你，只是享受你对TA好。承认很难，但继续耗半年结果也一样，及时止损是对自己负责。',
+            keywords: ['3个月自检', '2条及以上→推进', '1条及以下→止损'],
           ),
         ],
       ),
