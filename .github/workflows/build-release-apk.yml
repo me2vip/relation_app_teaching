@@ -1,0 +1,340 @@
+name: Build & Release APK
+
+# 触发方式：
+# 1. 推送 tag（如 v1.0.0）→ 自动构建并发布到 GitHub Release
+# 2. 推送到 main/master → 构建 APK 作为构建产物上传（不发布）
+# 3. 手动从 Actions 页面触发（可选择构建类型）
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: '构建类型'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
+      create_release:
+        description: '是否创建 GitHub Release（仅 release 且无 tag 时可选）'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  FLUTTER_VERSION: '3.27.1'            # 与项目 pubspec SDK 匹配（^3.12.2，选一个稳定的 3.x）
+  JAVA_VERSION: '17'                   # build.gradle 使用 Java 17
+
+permissions:
+  contents: write                       # 发布 Release 资产需写权限
+  pull-requests: read
+
+jobs:
+  # ======================================================================
+  # Job 1：构建 Android APK（含签名）
+  # ======================================================================
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    outputs:
+      version_name: ${{ steps.meta.outputs.version_name }}
+      version_code: ${{ steps.meta.outputs.version_code }}
+      apk_path_release: ${{ steps.paths.outputs.apk_release }}
+      apk_path_debug: ${{ steps.paths.outputs.apk_debug }}
+      apk_name_release: ${{ steps.paths.outputs.name_release }}
+      apk_name_debug: ${{ steps.paths.outputs.name_debug }}
+      build_type: ${{ steps.meta.outputs.build_type }}
+
+    steps:
+      - name: Checkout 源码
+        uses: actions/checkout@v4
+
+      # ---------- 版本 / 构建元信息 ----------
+      - name: 解析版本与构建类型
+        id: meta
+        run: |
+          set -e
+          # 从 pubspec.yaml 读取 version: x.y.z+n
+          PUBSPEC_VER=$(grep -E '^version:' pubspec.yaml | head -1 | awk '{print $2}')
+          VER_NAME=$(echo "$PUBSPEC_VER" | cut -d'+' -f1)
+          VER_CODE=$(echo "$PUBSPEC_VER" | cut -d'+' -f2)
+          echo "version_name=$VER_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VER_CODE" >> "$GITHUB_OUTPUT"
+          echo "Pubspec 版本名=$VER_NAME 版本号=$VER_CODE"
+
+          # 确定构建类型：tag / workflow_dispatch → release，PR → debug，push 分支 => release
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BT="debug"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            BT="${{ github.event.inputs.build_type }}"
+          else
+            BT="release"
+          fi
+          echo "build_type=$BT" >> "$GITHUB_OUTPUT"
+          echo "build_type=$BT"
+
+      # ---------- 环境：JDK ----------
+      - name: 设置 JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
+
+      # ---------- 环境：Flutter ----------
+      - name: 安装 Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+          cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:'
+
+      - name: 验证 Flutter 环境
+        run: |
+          flutter --version
+          flutter doctor -v || true
+
+      # ---------- 依赖 ----------
+      - name: 获取 Flutter 依赖
+        run: flutter pub get
+
+      - name: 生成应用图标（可选，图标已在仓库中可跳过）
+        run: |
+          # 仅当资源变化时重新生成；失败也不阻塞
+          dart run flutter_launcher_icons || true
+
+      # ---------- 签名密钥还原（仅 release）----------
+      # 原理：
+      #   1) GitHub Secrets 里存 base64 编码的 keystore（ANDROID_KEYSTORE_B64）
+      #   2) Secrets 里存 keyAlias / keyPassword / storePassword
+      #   3) 写入 android/key.properties + 临时 .jks 文件
+      # 若密钥未配置，release 构建将退化为 debug 签名
+      - name: 准备签名配置（release）
+        if: steps.meta.outputs.build_type == 'release'
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          set +e
+          if [[ -n "$KEYSTORE_B64" && -n "$KEY_ALIAS" && -n "$KEY_PASSWORD" && -n "$STORE_PASSWORD" ]]; then
+            echo "检测到签名密钥 Secret，写入签名配置..."
+            echo "$KEYSTORE_B64" | base64 -d > android/app/upload-keystore.jks
+            cat > android/key.properties <<EOF
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          storeFile=app/upload-keystore.jks
+          storePassword=$STORE_PASSWORD
+          EOF
+            echo "✅ 已写入 key.properties 与 keystore"
+          else
+            echo "⚠️  未检测到签名密钥 Secret，release 构建将使用 debug 签名（可安装但不建议上架）"
+            # 删除 key.properties，让 gradle 回落到无签名配置
+            rm -f android/key.properties
+          fi
+          set -e
+
+      # ---------- 构建 APK ----------
+      - name: 构建 APK (${{ steps.meta.outputs.build_type }})
+        id: build
+        run: |
+          BT="${{ steps.meta.outputs.build_type }}"
+          if [[ "$BT" == "release" ]]; then
+            flutter build apk --release --split-per-abi
+          else
+            flutter build apk --debug
+          fi
+
+      # ---------- 整理输出路径 ----------
+      - name: 确定 APK 输出路径与文件名
+        id: paths
+        run: |
+          set -e
+          VER="${{ steps.meta.outputs.version_name }}"
+          VT="${{ steps.meta.outputs.build_type }}"
+          BUILD_DIR="build/app/outputs/flutter-apk"
+
+          REL_APK=""
+          DEBUG_APK=""
+          REL_NAME=""
+          DEBUG_NAME=""
+
+          # release 产物（split-per-abi 会生成多个）
+          if [[ -f "$BUILD_DIR/app-arm64-v8a-release.apk" ]]; then
+            REL_APK="$BUILD_DIR/app-arm64-v8a-release.apk"
+            REL_NAME="社交教练_v${VER}_arm64_release.apk"
+            echo "release 模式 (split-per-abi)，选择 arm64 作为主产物: $REL_APK"
+          elif [[ -f "$BUILD_DIR/app-release.apk" ]]; then
+            REL_APK="$BUILD_DIR/app-release.apk"
+            REL_NAME="社交教练_v${VER}_universal_release.apk"
+            echo "release 模式 (universal): $REL_APK"
+          fi
+
+          if [[ -f "$BUILD_DIR/app-debug.apk" ]]; then
+            DEBUG_APK="$BUILD_DIR/app-debug.apk"
+            DEBUG_NAME="社交教练_v${VER}_debug.apk"
+          fi
+
+          {
+            echo "apk_release=$REL_APK"
+            echo "apk_debug=$DEBUG_APK"
+            echo "name_release=$REL_NAME"
+            echo "name_debug=$DEBUG_NAME"
+          } >> "$GITHUB_OUTPUT"
+
+          ls -lah "$BUILD_DIR" || true
+
+      # ---------- 上传构建产物（无论是否发布都保留）----------
+      - name: 上传 Release APK 构建产物
+        if: steps.paths.outputs.apk_release != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: APK-Release
+          path: ${{ steps.paths.outputs.apk_release }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: 上传 Debug APK 构建产物
+        if: steps.paths.outputs.apk_debug != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: APK-Debug
+          path: ${{ steps.paths.outputs.apk_debug }}
+          if-no-files-found: warn
+          retention-days: 15
+
+      # ---------- 额外：同时上传 mapping + symbols ----------
+      - name: 上传 ProGuard mapping（release）
+        if: steps.meta.outputs.build_type == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProGuard-Mapping
+          path: build/app/outputs/mapping/release/mapping.txt
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # ======================================================================
+  # Job 2：当推送 tag（v*） 或手动选择创建 Release 时，发布 GitHub Release
+  # ======================================================================
+  create-release:
+    name: 创建 GitHub Release & 上传 APK
+    needs: build-apk
+    if: |
+      startsWith(github.ref, 'refs/tags/v')
+      || (github.event_name == 'workflow_dispatch'
+          && github.event.inputs.create_release == true
+          && needs.build-apk.outputs.build_type == 'release')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 源码（为了读取 CHANGELOG / README）
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 下载 Release APK 产物
+        uses: actions/download-artifact@v4
+        with:
+          name: APK-Release
+          path: ./release-artifact
+
+      - name: 整理 APK 文件并重命名
+        id: prep
+        run: |
+          set -e
+          ls -lah ./release-artifact
+          SRC=$(find ./release-artifact -name "*.apk" | head -1)
+          [[ -z "$SRC" ]] && { echo "❌ 未找到 APK 产物"; exit 1; }
+          VER="${{ needs.build-apk.outputs.version_name }}"
+          NAME="社交教练_v${VER}_arm64_release.apk"
+          if [[ -n "${{ needs.build-apk.outputs.apk_name_release }}" ]]; then
+            NAME="${{ needs.build-apk.outputs.apk_name_release }}"
+          fi
+          mv "$SRC" "./$NAME"
+          ls -lah "./$NAME"
+          echo "apk_path=./$NAME" >> "$GITHUB_OUTPUT"
+          echo "apk_name=$NAME" >> "$GITHUB_OUTPUT"
+
+          # 计算文件哈希
+          if command -v sha256sum >/dev/null 2>&1; then
+            SHA=$(sha256sum "./$NAME" | awk '{print $1}')
+            echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
+            echo "SHA256: $SHA"
+          fi
+
+      - name: 生成发布说明（Release Notes）
+        id: notes
+        run: |
+          VER="${{ needs.build-apk.outputs.version_name }}"
+          TAG="${GITHUB_REF_NAME:-v$VER}"
+          {
+            echo "## 🎉 社交教练 v$VER 发布"
+            echo ""
+            echo "- **版本号**：\`$VER\` (${{ needs.build-apk.outputs.version_code }})"
+            echo "- **构建类型**：${{ needs.build-apk.outputs.build_type }}"
+            echo "- **生成时间**：$(date -u '+%Y-%m-%d %H:%M UTC')"
+            if [[ -n "${{ steps.prep.outputs.sha256 }}" ]]; then
+              echo "- **SHA256**：\`${{ steps.prep.outputs.sha256 }}\`"
+            fi
+            echo ""
+            echo "---"
+            echo ""
+            echo "### 📱 安装说明"
+            echo "1. 下载下方 APK 到手机"
+            echo "2. 允许「未知来源」安装（首次安装需在系统设置中开启）"
+            echo "3. 安装完成后打开即可使用"
+            echo ""
+            echo "### 🚀 功能特性"
+            echo "- 10 关社交教学关卡（初级 → 中级 → 高级 → 毕业考核）"
+            echo "- 知识词典：系统化社交技巧整理，支持搜索/分类筛选"
+            echo "- **知识练习**：基于单个知识点的情景对话训练，即时评分与参考话术"
+            echo "- **知识测试**：单选 / 多选 / 判断题，详细解析帮助巩固记忆"
+            echo "- **要点提炼**：核心要点卡片 + 记忆模式（隐藏答案自测）"
+            echo "- 快速练习：20+ 高频场景，碎片化练习社交技巧"
+            echo "- 一键导出知识手册 PDF"
+            echo ""
+            echo "---"
+            echo "### 📝 最近变更（自动从提交提取）"
+            echo ""
+          } > RELEASE_NOTES.md
+
+          # 附加最近的提交日志
+          if command -v git >/dev/null 2>&1; then
+            PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+            if [[ -n "$PREV_TAG" ]]; then
+              echo "#### 对比 $PREV_TAG → $TAG" >> RELEASE_NOTES.md
+              echo "" >> RELEASE_NOTES.md
+              git log "$PREV_TAG..HEAD" --pretty=format:"- %s (%h)" --no-merges 2>/dev/null | head -50 >> RELEASE_NOTES.md || true
+            else
+              git log --oneline -20 --pretty=format:"- %s (%h)" --no-merges 2>/dev/null >> RELEASE_NOTES.md || true
+            fi
+          fi
+
+          echo "" >> RELEASE_NOTES.md
+
+          cat RELEASE_NOTES.md
+
+      - name: 创建 GitHub Release 并上传 APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: 社交教练 v${{ needs.build-apk.outputs.version_name }}
+          body_path: RELEASE_NOTES.md
+          files: |
+            ${{ steps.prep.outputs.apk_path }}
+          generate_release_notes: false
+          fail_on_unmatched_files: true
+          prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') || contains(github.ref_name, '-alpha') }}
