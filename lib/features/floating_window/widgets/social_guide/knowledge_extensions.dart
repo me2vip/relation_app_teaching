@@ -199,7 +199,7 @@ class KnowledgeExtensionRegistry {
         KnowledgeKeyPoint(
           title: '三句话结构',
           content: '1. 身份标签（5秒）：你是谁\n2. 价值陈述（10秒）：你做什么/关注什么\n3. 兴趣钩子（5秒）：开放性问题结尾',
-          icon: Icons.structure_rounded,
+          icon: Icons.account_tree_rounded,
           importance: '核心',
         ),
         KnowledgeKeyPoint(
@@ -211,7 +211,7 @@ class KnowledgeExtensionRegistry {
         KnowledgeKeyPoint(
           title: '留钩子',
           content: '每段自我介绍必须用一个开放性问题结尾，让对方有话可接。',
-          icon: Icons.hook_rounded,
+          icon: Icons.anchor_rounded,
           importance: '核心',
         ),
         KnowledgeKeyPoint(
@@ -334,7 +334,7 @@ class KnowledgeExtensionRegistry {
         KnowledgeKeyPoint(
           title: '共鸣金字塔',
           content: 'Layer1 确认情绪 → Layer2 共情回应 → Layer3 积极重构',
-          icon: Icons.pyramid_chart_rounded,
+          icon: Icons.layers_rounded,
           importance: '核心',
         ),
         KnowledgeKeyPoint(
