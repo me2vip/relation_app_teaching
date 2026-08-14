@@ -193,25 +193,48 @@ class AppUpdateService {
           tagName.toLowerCase().startsWith('v') ? tagName.substring(1) : tagName;
 
       // 找 APK 资产
-      final assets = (data['assets'] as List?) ?? <dynamic>[];
+      final assets = (data['assets'] as List?) ?? <dynamic>[]>;
       String apkUrl = '';
       String apkName = '';
       int apkSize = 0;
-      // 优先选 arm64，其次 universal，再次任意 apk
-      for (final pattern in ['arm64', 'universal', '']) {
-        for (final a in assets) {
-          final name = (a['name'] ?? '').toString();
-          if (!name.toLowerCase().endsWith('.apk')) continue;
-          if (pattern.isNotEmpty &&
-              !name.toLowerCase().contains(pattern.toLowerCase())) {
-            continue;
-          }
+
+      // 仅保留 .apk 资产
+      final apks = <Map<String, dynamic>>[];
+      for (final a in assets) {
+        if (a is! Map<String, dynamic>) continue;
+        final name = (a['name'] ?? '').toString().toLowerCase();
+        if (name.endsWith('.apk')) apks.add(a);
+      }
+
+      // 1) 优先选文件名包含本 release 版本号（如 1.0.11）的 apk。
+      //    修复：v1.0.11 release 可能同时挂着 _v1.0.10_xxx.apk 与
+      //    _v1.0.11_xxx.apk，若按"第一个 arm64"选取会误下载旧版 apk，
+      //    导致安装后版本回退、再次检测仍提示更新（即下载最新后仍要更新）。
+      //    用非数字边界匹配，避免 1.0.1 误中 1.0.11。
+      final versionPattern =
+          RegExp(r'(?:^|[^0-9])' + RegExp.escape(version) + r'(?:$|[^0-9])');
+      for (final a in apks) {
+        final name = (a['name'] ?? '').toString();
+        if (versionPattern.hasMatch(name)) {
           apkUrl = (a['browser_download_url'] ?? '').toString();
           apkName = name;
           apkSize = (a['size'] as num?)?.toInt() ?? 0;
           break;
         }
-        if (apkUrl.isNotEmpty) break;
+      }
+      // 2) 退化：按 arm64 -> universal -> 任意 选择
+      if (apkUrl.isEmpty) {
+        for (final pattern in ['arm64', 'universal', '']) {
+          for (final a in apks) {
+            final name = (a['name'] ?? '').toString().toLowerCase();
+            if (pattern.isNotEmpty && !name.contains(pattern)) continue;
+            apkUrl = (a['browser_download_url'] ?? '').toString();
+            apkName = (a['name'] ?? '').toString();
+            apkSize = (a['size'] as num?)?.toInt() ?? 0;
+            break;
+          }
+          if (apkUrl.isNotEmpty) break;
+        }
       }
 
       // 时间
