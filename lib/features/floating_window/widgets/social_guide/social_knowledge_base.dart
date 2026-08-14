@@ -26,15 +26,28 @@ class SocialKnowledgeBaseWidget extends StatefulWidget {
 }
 
 class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
-  String? _selectedCategory;
+  KnowledgeMajorCategory? _selectedMajor; // 大分类筛选（null=全部）
+  String? _selectedCategory;              // 子分类筛选
   int? _selectedLevel;
   TargetAudience? _selectedAudience; // 性别适用对象筛选：all/male/female
   String _searchQuery = '';
   final _searchController = TextEditingController();
   final Set<String> _expandedIds = {};
 
+  /// 当前可选的子分类列表（根据大分类联动）
+  List<String> get _visibleSubCategories {
+    if (_selectedMajor == null) {
+      return SocialKnowledgeBase.categories;
+    }
+    return SocialKnowledgeBase.subCategoriesOf(_selectedMajor!);
+  }
+
   List<SocialKnowledgeEntry> get _filteredEntries {
     var entries = SocialKnowledgeBase.entries;
+    // 大分类筛选
+    if (_selectedMajor != null) {
+      entries = entries.where((e) => e.majorCategory == _selectedMajor).toList();
+    }
     if (_selectedCategory != null) {
       entries = entries.where((e) => e.category == _selectedCategory).toList();
     }
@@ -80,13 +93,87 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
       children: [
         // 搜索栏
         _buildSearchBar(cs),
-        // 分类筛选
+        // 大分类筛选（顶层导航）
+        _buildMajorCategoryFilter(cs),
+        // 子分类筛选（联动大分类）
         _buildCategoryFilter(cs),
         // 性别适用对象筛选（在分类下面新增一行）
         _buildAudienceFilter(cs),
         // 内容列表
         Expanded(child: _buildEntryList(cs)),
       ],
+    );
+  }
+
+  Widget _buildMajorCategoryFilter(ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+      child: SizedBox(
+        height: 32,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            _buildMajorChip(null, '全部', null, cs),
+            const SizedBox(width: 6),
+            ...SocialKnowledgeBase.majorCategories.map((m) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 6),
+                child: _buildMajorChip(m, m.label, m.emoji, cs),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMajorChip(
+      KnowledgeMajorCategory? major, String label, String? emoji, ColorScheme cs) {
+    final selected = _selectedMajor == major;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedMajor = major;
+          // 切换大分类后，重置子分类（避免选了一个不属于当前大分类的子分类）
+          if (_selectedCategory != null &&
+              major != null &&
+              !SocialKnowledgeBase.subCategoriesOf(major)
+                  .contains(_selectedCategory)) {
+            _selectedCategory = null;
+          }
+          _selectedLevel = null;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected
+              ? cs.primary.withValues(alpha: 0.92)
+              : cs.surfaceContainerHighest.withValues(alpha: 0.35),
+          borderRadius: BorderRadius.circular(18),
+          border: selected ? null : Border.all(
+            color: cs.outlineVariant.withValues(alpha: 0.3),
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (emoji != null) ...[
+              Text(emoji, style: const TextStyle(fontSize: 13)),
+              const SizedBox(width: 4),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -177,20 +264,23 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
   }
 
   Widget _buildCategoryFilter(ColorScheme cs) {
+    final subs = _visibleSubCategories;
     return SizedBox(
       height: 36,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         children: [
-          _buildFilterChip('全部', _selectedCategory == null && _selectedLevel == null, () {
+          _buildFilterChip(
+              '全部子分类',
+              _selectedCategory == null && _selectedLevel == null, () {
             setState(() {
               _selectedCategory = null;
               _selectedLevel = null;
             });
           }, cs),
           const SizedBox(width: 6),
-          ...SocialKnowledgeBase.categories.map((cat) {
+          ...subs.map((cat) {
             return Padding(
               padding: const EdgeInsets.only(right: 6),
               child: _buildFilterChip(cat, _selectedCategory == cat, () {
