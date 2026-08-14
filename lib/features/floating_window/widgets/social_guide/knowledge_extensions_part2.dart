@@ -1240,7 +1240,7 @@ final Map<String, KnowledgeExtensionBundle> knowledgePart2Bundles = {
       ),
       KnowledgeKeyPoint(
         title: '用提问代替指令',
-        instruction: '"你觉得应该怎么做？" > "你必须这样做"。这个阶段的孩子最看重"你有没有认真对待我"，认真回答他们的问题是大尊重。',
+        content: '"你觉得应该怎么做？" > "你必须这样做"。这个阶段的孩子最看重"你有没有认真对待我"，认真回答他们的问题是大尊重。',
         icon: Icons.help_outline_rounded,
         importance: '核心',
       ),
