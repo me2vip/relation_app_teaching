@@ -115,6 +115,9 @@ class AppUpdateService {
   static const _connectTimeout = Duration(seconds: 15);
   static const _receiveTimeout = Duration(seconds: 15);
 
+  /// downloadApk 最大重试次数
+  static const _maxRetries = 3;
+
   /// 获取 Dio 实例（带默认 UA / Accept）
   static Dio _createDio() {
     return Dio(BaseOptions(
@@ -300,10 +303,13 @@ class AppUpdateService {
   ///
   /// 保存目录：`getExternalStorageDirectory()/Android/data/<pkg>/files/` 或
   /// 退化到 `getTemporaryDirectory()`。
+  /// 策略：先下载到临时文件（`.tmp`），下载成功后再 rename，避免断网时旧文件被删导致无 APK 可用。
+  /// 重试：最多 [_maxRetries] 次，指数退避（1s / 2s / 4s）。
   static Future<File> downloadApk(
     GithubReleaseInfo release, {
     void Function(int received, int total)? onProgress,
     CancelToken? cancelToken,
+    int maxRetries = 3,
   }) async {
     final dio = Dio(BaseOptions(
       connectTimeout: _connectTimeout,
@@ -312,18 +318,48 @@ class AppUpdateService {
     final dir = await getExternalStorageDirectory() ??
         await getTemporaryDirectory();
     final savePath = '${dir.path}/${release.apkName}';
-    // 删除旧文件
-    final oldFile = File(savePath);
-    if (await oldFile.exists()) {
-      await oldFile.delete();
+    final tempPath = '$savePath.tmp';
+
+    DioException? lastError;
+
+    for (var attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // 删除旧的临时文件（上次中断残留）
+        final tempFile = File(tempPath);
+        if (await tempFile.exists()) {
+          await tempFile.delete();
+        }
+
+        await dio.download(
+          release.apkDownloadUrl,
+          tempPath,
+          onReceiveProgress: onProgress,
+          cancelToken: cancelToken,
+        );
+
+        // 下载成功，重命名到目标路径
+        final finalFile = File(savePath);
+        if (await finalFile.exists()) {
+          await finalFile.delete();
+        }
+        await tempFile.rename(savePath);
+        return finalFile;
+      } on DioException catch (e) {
+        lastError = e;
+        // 用户主动取消，不重试
+        if (e.type == DioExceptionType.cancel) rethrow;
+        // 非最后一代，等待后重试
+        if (attempt < maxRetries) {
+          await Future.delayed(Duration(seconds: attempt));
+        }
+      }
     }
-    await dio.download(
-      release.apkDownloadUrl,
-      savePath,
-      onReceiveProgress: onProgress,
-      cancelToken: cancelToken,
+
+    // 所有重试均失败，抛出明确错误
+    throw lastError ?? DioException(
+      requestOptions: RequestOptions(path: release.apkDownloadUrl),
+      message: '下载 APK 失败（已重试 $maxRetries 次）',
     );
-    return File(savePath);
   }
 
   /// 调用系统安装器安装 APK
