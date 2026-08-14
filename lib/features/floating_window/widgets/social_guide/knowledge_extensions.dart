@@ -80,6 +80,7 @@ class KnowledgeQuestion {
 // ============================================================================
 
 class KnowledgeGuideStep {
+  final int step;               // 步骤序号（1, 2, 3...）
   final String title;           // 步骤标题
   final String instruction;     // 指导说明（做什么、为什么）
   final String example;         // 示范话术 / 示范动作
@@ -87,6 +88,7 @@ class KnowledgeGuideStep {
   final List<String> keywords;  // 本步骤关键词
 
   const KnowledgeGuideStep({
+    this.step = 0,
     required this.title,
     required this.instruction,
     required this.example,
@@ -96,15 +98,15 @@ class KnowledgeGuideStep {
 }
 
 class KnowledgeStepGuide {
-  final String id;
+  final String id;                           // 指导主题ID（可空）
   final String title;                        // 指导主题
-  final String scenario;                     // 适用场景描述
+  final String scenario;                     // 适用场景描述（可空）
   final List<KnowledgeGuideStep> steps;      // 分步骤
 
   const KnowledgeStepGuide({
-    required this.id,
+    this.id = '',
     required this.title,
-    required this.scenario,
+    this.scenario = '',
     required this.steps,
   });
 }
