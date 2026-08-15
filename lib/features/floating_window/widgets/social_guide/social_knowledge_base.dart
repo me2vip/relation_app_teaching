@@ -15,7 +15,7 @@ import 'knowledge_extract_page.dart';
 import 'knowledge_detail_page.dart';
 
 // 知识词典三种显示方式
-enum _KnowledgeDisplayMode { list, mindmap, tree }
+enum _KnowledgeDisplayMode { list, mindmap, tree, knowledgeTree }
 
 // 导图/树 用的层级分组辅助类
 class _KnowledgeSubGroup {
@@ -127,6 +127,7 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
             _KnowledgeDisplayMode.list => _buildEntryList(cs),
             _KnowledgeDisplayMode.mindmap => _buildMindMap(cs),
             _KnowledgeDisplayMode.tree => _buildTree(cs),
+            _KnowledgeDisplayMode.knowledgeTree => _buildKnowledgeTree(cs),
           },
         ),
       ],
@@ -1053,6 +1054,7 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
           _modeButton(_KnowledgeDisplayMode.list, Icons.view_agenda_rounded, '列表', cs),
           _modeButton(_KnowledgeDisplayMode.mindmap, Icons.bubble_chart_rounded, '导图', cs),
           _modeButton(_KnowledgeDisplayMode.tree, Icons.account_tree_rounded, '树形', cs),
+          _modeButton(_KnowledgeDisplayMode.knowledgeTree, Icons.park_rounded, '知识树', cs),
         ],
       ),
     );
@@ -1341,6 +1343,139 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
                 const SizedBox(width: 3),
                 _audienceBadge(e.targetAudience, cs),
               ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------------- 知识树视图（树干 + 枝干 + 叶子） ----------------------
+  Widget _buildKnowledgeTree(ColorScheme cs) {
+    final groups = _hierarchy;
+    if (groups.isEmpty) return _emptyState(cs);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _treeTrunkTop(cs),
+          const SizedBox(height: 4),
+          ...groups.map((g) => _treeCategoryBlock(g, cs)),
+          const SizedBox(height: 8),
+          _treeGround(cs),
+        ],
+      ),
+    );
+  }
+
+  Widget _treeTrunkTop(ColorScheme cs) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.park_rounded, size: 26, color: Colors.green.shade600),
+          const SizedBox(height: 2),
+          Container(width: 4, height: 10, decoration: BoxDecoration(color: Colors.brown.shade400, borderRadius: BorderRadius.circular(2))),
+        ],
+      ),
+    );
+  }
+
+  Widget _treeGround(ColorScheme cs) {
+    return Container(
+      margin: const EdgeInsets.only(top: 6, left: 2, right: 2),
+      height: 3,
+      decoration: BoxDecoration(color: Colors.brown.shade300, borderRadius: BorderRadius.circular(2)),
+    );
+  }
+
+  Widget _treeCategoryBlock(_KnowledgeMajorGroup g, ColorScheme cs) {
+    final catColor = _getCategoryColor(g.subs.first.entries.first.category, cs);
+    final trunkColor = Colors.brown.shade400;
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        border: Border(left: BorderSide(color: trunkColor, width: 3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 枝干 + 节点
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(width: 16, height: 2, color: catColor.withValues(alpha: 0.7)),
+              Container(width: 8, height: 8, decoration: BoxDecoration(shape: BoxShape.circle, color: catColor)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: catColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: catColor.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(g.major.emoji, style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 6),
+                      Expanded(child: Text(g.major.label, style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: catColor))),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(color: catColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(9)),
+                        child: Text('${g.count}', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: catColor)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(left: 22),
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: g.entries.map((e) => _treeLeaf(e, cs)).toList(),
+            ),
+          ),
+          const SizedBox(height: 6),
+        ],
+      ),
+    );
+  }
+
+  Widget _treeLeaf(SocialKnowledgeEntry e, ColorScheme cs) {
+    final catColor = _getCategoryColor(e.category, cs);
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: () => _jumpToDetail(e),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          decoration: BoxDecoration(
+            color: catColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: catColor.withValues(alpha: 0.35)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.eco_rounded, size: 11, color: catColor),
+              const SizedBox(width: 4),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 120),
+                child: Text(
+                  e.title,
+                  style: TextStyle(fontSize: 11, color: cs.onSurface),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
