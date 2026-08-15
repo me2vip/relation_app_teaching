@@ -1,7 +1,7 @@
 name: relation_app_teaching
 description: "社交技能分级教学与模拟对话练习 App"
 publish_to: 'none'
-version: 1.0.19+19
+version: 1.0.20+20
 
 environment:
   # 放宽 SDK 约束：同时支持较新的 Dart 3.12+，也允许老一点的 3.5+（CI / 本地各版本都能跑）
