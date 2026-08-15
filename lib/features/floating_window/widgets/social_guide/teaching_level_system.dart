@@ -239,6 +239,12 @@ class LevelRegistry {
           content: '用一个小故事替代形容词——\'我上周用XX方法帮朋友解决了YY\'比\'我擅长沟通\'可信十倍。',
           isPrinciple: false,
         ),
+        KnowledgeCard(
+          title: '兴趣钩子设计',
+          content: '自我介绍结尾留一个"开放式钩子"：抛出一个对方能接住的问题或悬念，把对话主动权递过去。
+例："我最近在学手冲咖啡，不过总翻车——你平时喝咖啡吗？"比"我兴趣爱好是咖啡"更能引发追问。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 20,
       maxTurns: 4,
@@ -577,6 +583,16 @@ class LevelRegistry {
                 KnowledgeCard(
           title: '迁移训练',
           content: '把一个场景里用顺的话术，刻意搬到下一个陌生场景复用。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '临场心态管理',
+          content: '紧张时用"3-3-3"落地：3秒深呼吸、3句话内的最小回应、3个观察点（对方表情/环境/话题）——把注意力从"我表现如何"拉回"眼前这个人"。心态稳了，技巧才出得来。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '综合应变清单',
+          content: '面对冷场→用L4话题漏斗续接；面对误会→先澄清事实再安抚情绪（L6）；面对冲突升级→先降级再修复（L9）；面对深度对话机会→用脆弱提问接住（L7）。把15关学过的工具按场景索引，关键时刻能调出来就是毕业。',
           isPrinciple: false,
         ),
       ],

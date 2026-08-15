@@ -277,3 +277,10 @@
   - 新增 `lib/core/utils/app_downloader.dart`（独立下载管理器）
   - 适配 `AppUpdateService`，保留原有 cancelToken + onProgress 兼容
   - `AppUpdateDialog`（`update_dialog.dart`）完整集成 AppDownloader
+
+## v1.0.25（2026-08-15）
+
+### 关卡知识卡补全（内容审查修复）
+- L02「自我介绍」补 1 张卡「兴趣钩子设计」：介绍结尾抛开放式钩子，把对话主动权递给对方
+- L10「毕业考核」补 2 张卡：「临场心态管理」（3-3-3 落地法）与「综合应变清单」（冷场/误会/冲突/深度对话按场景索引工具）
+- 15 关知识卡全部达到 5 张/关（此前 L02=4、L10=3）
