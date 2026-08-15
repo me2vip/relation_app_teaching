@@ -265,3 +265,15 @@
 
 
 *最后更新: 2026-08-15*
+
+## v1.0.24
+
+- **时间**: 2026-08-15
+- **类型**: 功能增强
+- **内容**:
+  - 自动升级弹窗新增下载速度实时显示、剩余时间（ETA）推算
+  - 支持暂停 / 继续（断点续传） / 重新下载
+  - 多线程下载开关 + 可选线程数（1~8，默认 3）
+  - 新增 `lib/core/utils/app_downloader.dart`（独立下载管理器）
+  - 适配 `AppUpdateService`，保留原有 cancelToken + onProgress 兼容
+  - `AppUpdateDialog`（`update_dialog.dart`）完整集成 AppDownloader
