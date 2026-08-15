@@ -1091,7 +1091,7 @@ class KnowledgeExtensionRegistry {
     // K083 关系定位判断与应对策略（男性视角）
     // =========================================================================
     'K083': KnowledgeExtensionBundle(
-      knowledgeId: 'K083',
+      id: 'K083',
       keyPoints: [
         KnowledgeKeyPoint(
           title: '定位的本质',
@@ -1209,33 +1209,34 @@ class KnowledgeExtensionRegistry {
       questions: [
         KnowledgeQuestion(
           id: 'K083-Q1',
-          type: QuestionType.trueFalse,
+          type: 'judgment',
           question: '女生经常主动找你聊天、回复快、话题延伸好，说明她把你当可发展对象。',
-          correctIndices: [1],
-          explanation: '聊天积极只是必要条件，不是充分条件。如果她从不单独约会你、从不推进关系、回避升温话题，说明她可能只是把你当朋友备胎。判断可发展对象需要多维信号，聊天只是其中之一。',
-          difficulty: 1,
+          answer: false,
+          analysis: '聊天积极只是必要条件，不是充分条件。如果她从不单独约会你、从不推进关系、回避升温话题，说明她可能只是把你当朋友备胎。判断可发展对象需要多维信号，聊天只是其中之一。',
+          difficulty: 'easy',
         ),
         KnowledgeQuestion(
           id: 'K083-Q2',
-          type: QuestionType.singleChoice,
+          type: 'single',
           question: '以下哪种情况是关系定位中最明确的止损信号？',
           options: ['她回复慢但有回复', '她明确说"我们还是做朋友吧"且态度坚定', '她偶尔忘记回复消息', '她对你的话题不感兴趣但保持礼貌'],
-          correctIndices: [1],
-          explanation: '明确表态是止损信号里最直接的。选项A/C/D都可能是对方在忙或性格原因，不构成止损条件。只有对方明确表态"只想做朋友"且态度坚定，才应立即减少投入、转向其他机会。',
-          difficulty: 1,
+          answer: 1,
+          analysis: '明确表态是止损信号里最直接的。选项A/C/D都可能是对方在忙或性格原因，不构成止损条件。只有对方明确表态"只想做朋友"且态度坚定，才应立即减少投入、转向其他机会。',
+          difficulty: 'easy',
         ),
         KnowledgeQuestion(
           id: 'K083-Q3',
-          type: QuestionType.singleChoice,
+          type: 'single',
           question: '当一个女生对你忽冷忽热时，最合理的应对是？',
+          instruction: 'A. 继续加大投入，用热情打动她  B. 停止主动，等她来找你并观察是否改变  C. 直接问她到底什么意思  D. 找她身边的朋友打听情况',
           options: ['继续加大投入，用热情打动她', '停止主动，等她来找你并观察是否改变', '直接问她到底什么意思', '找她身边的朋友打听情况'],
-          correctIndices: [1],
-          explanation: '忽冷忽热的本质是她对这段关系态度不明朗或正在权衡。选项A只会让你消耗更多；选项C在关系不明朗时直接追问会让对方有压力；选项D打探朋友是大忌。选项B是成本最低、最体面的策略：停止主动，看她是否主动找你，从而判断她的真实兴趣。',
-          difficulty: 2,
+          answer: 1,
+          analysis: '忽冷忽热的本质是她对这段关系态度不明朗或正在权衡。选项A只会让你消耗更多；选项C在关系不明朗时直接追问会让对方有压力；选项D打探朋友是大忌。选项B是成本最低、最体面的策略：停止主动，看她是否主动找你，从而判断她的真实兴趣。',
+          difficulty: 'medium',
         ),
         KnowledgeQuestion(
           id: 'K083-Q4',
-          type: QuestionType.multipleChoice,
+          type: 'multi',
           question: '以下哪些是判断「可发展对象」的强信号？（可多选）',
           options: [
             '愿意单独出来约会且不临时取消',
@@ -1243,9 +1244,9 @@ class KnowledgeExtensionRegistry {
             '愿意把你介绍给她的朋友',
             '聊天时偶尔深夜也回消息',
           ],
-          correctIndices: [0, 1, 2],
-          explanation: '选项0（愿单独约会）是升温的最直接信号。选项1（记得细节）说明她在认真关注你，不是随口敷衍。选项2（介绍朋友）说明她愿意把你纳入社交圈，是关系升级的强信号。选项3（深夜聊天）只是社交活跃的表现，不构成关系发展的明确信号。',
-          difficulty: 2,
+          answer: [0, 1, 2],
+          analysis: '选项0（愿单独约会）是升温的最直接信号。选项1（记得细节）说明她在认真关注你，不是随口敷衍。选项2（介绍朋友）说明她愿意把你纳入社交圈，是关系升级的强信号。选项3（深夜聊天）只是社交活跃的表现，不构成关系发展的明确信号。',
+          difficulty: 'medium',
         ),
       ],
     ),
@@ -1254,7 +1255,7 @@ class KnowledgeExtensionRegistry {
     // K084 关系定位判断与应对策略（女性视角）
     // =========================================================================
     'K084': KnowledgeExtensionBundle(
-      knowledgeId: 'K084',
+      id: 'K084',
       keyPoints: [
         KnowledgeKeyPoint(
           title: '定位的本质',
@@ -1372,24 +1373,24 @@ class KnowledgeExtensionRegistry {
       questions: [
         KnowledgeQuestion(
           id: 'K084-Q1',
-          type: QuestionType.trueFalse,
+          type: 'judgment',
           question: '一个男生对你很好（聊天积极、经常关心、主动买单），说明他一定是把你当可发展对象。',
-          correctIndices: [1],
-          explanation: '他对你好可能只是他的性格或习惯，不等于他想认真发展关系。有些人天生对所有人都很好，有些人只是享受暧昧的感觉。判断可发展对象要看：① 是否主动推进关系 ② 是否把你纳入社交圈 ③ 是否做出关系承诺。单纯的好不等于认真定位。',
-          difficulty: 1,
+          answer: false,
+          analysis: '他对你好可能只是他的性格或习惯，不等于他想认真发展关系。有些人天生对所有人都很好，有些人只是享受暧昧的感觉。判断可发展对象要看：① 是否主动推进关系 ② 是否把你纳入社交圈 ③ 是否做出关系承诺。单纯的好不等于认真定位。',
+          difficulty: 'easy',
         ),
         KnowledgeQuestion(
           id: 'K084-Q2',
-          type: QuestionType.singleChoice,
+          type: 'single',
           question: '当一个男生说"我现在不想谈恋爱"但继续每天找你聊天、约你单独出去，应该怎么应对？',
           options: ['继续投入，等他改变想法', '立即停止投入，不再主动回应', '明确告诉他你的立场，让他做出选择', '不再单独出去，但保持线上聊天'],
-          correctIndices: [2],
-          explanation: '"不想谈恋爱"但继续享受你的陪伴是典型的备胎定位。选项A继续投入只会让你消耗更多；选项B直接切断太激进；选项D保持模糊对双方都没有好处。选项C明确立场让他做选择，既保护了自己，也给了对方机会，是最体面的策略。',
-          difficulty: 2,
+          answer: 2,
+          analysis: '"不想谈恋爱"但继续享受你的陪伴是典型的备胎定位。选项A继续投入只会让你消耗更多；选项B直接切断太激进；选项D保持模糊对双方都没有好处。选项C明确立场让他做选择，既保护了自己，也给了对方机会，是最体面的策略。',
+          difficulty: 'medium',
         ),
         KnowledgeQuestion(
           id: 'K084-Q3',
-          type: QuestionType.multipleChoice,
+          type: 'multi',
           question: '以下哪些是判断「可发展对象」的强信号？（可多选）',
           options: [
             '主动约你单独见面，且不临时取消',
@@ -1397,18 +1398,18 @@ class KnowledgeExtensionRegistry {
             '愿意带你见他的朋友或家人',
             '聊天时经常发"哈哈"和表情包',
           ],
-          correctIndices: [0, 1, 2],
-          explanation: '选项0（单独约且不取消）是关系推进的最直接信号。选项1（记得细节）说明他在认真关注你，是真实兴趣。选项2（见朋友/家人）说明他在认真考虑这段关系的长期发展。选项3（发哈哈）只是聊天活跃的表现，不构成关系发展的明确信号。',
-          difficulty: 2,
+          answer: [0, 1, 2],
+          analysis: '选项0（单独约且不取消）是关系推进的最直接信号。选项1（记得细节）说明他在认真关注你，是真实兴趣。选项2（见朋友/家人）说明他在认真考虑这段关系的长期发展。选项3（发哈哈）只是聊天活跃的表现，不构成关系发展的明确信号。',
+          difficulty: 'medium',
         ),
         KnowledgeQuestion(
           id: 'K084-Q4',
-          type: QuestionType.singleChoice,
+          type: 'single',
           question: '以下哪种情况是判断男性「有稳定伴侣」的重要参考？',
           options: ['他从不发朋友圈', '他朋友圈发的是工作内容', '他朋友圈对你屏蔽，或者他从不发私人动态', '他朋友圈更新很频繁'],
-          correctIndices: [2],
-          explanation: '一个有正常社交生活的人，通常会在朋友圈发一些私人内容。如果他对你屏蔽朋友圈，或者朋友圈里几乎没有任何私人生活展示（只有工作转发），需要警惕——他可能在隐藏自己的感情状态，或者有不想让你知道的社交圈。选项A/B/D都不能直接推断有伴侣。',
-          difficulty: 2,
+          answer: 2,
+          analysis: '一个有正常社交生活的人，通常会在朋友圈发一些私人内容。如果他对你屏蔽朋友圈，或者朋友圈里几乎没有任何私人生活展示（只有工作转发），需要警惕——他可能在隐藏自己的感情状态，或者有不想让你知道的社交圈。选项A/B/D都不能直接推断有伴侣。',
+          difficulty: 'medium',
         ),
       ],
     ),
