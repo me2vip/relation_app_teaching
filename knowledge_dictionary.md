@@ -2,10 +2,10 @@
 
 ## 版本信息
 
-- **当前版本**: v1.0.20
+- **当前版本**: v1.0.21
 - **更新日期**: 2026-08-15
 - **变更说明**:
-- v1.0.20：K080–K084 各新增 G3「实战情景演练」分步指导（把脱单/识人/动态经营/关系定位方法套进真实场景分步走一遍）；版本号随 pubspec 升至 1.0.20+20
+- v1.0.21：知识词典新增三种显示方式切换（列表 / 导图 / 树形）。导图=中心节点向各分类辐射的脑图，条目 chip 可点跳详情；树形=大分类→子分类→条目的三级可折叠树，叶子点击跳转 KnowledgeDetailPage 并执行对应功能操作（分步指导/练习/测试/提炼）；搜索与分类/性别筛选对三种视图同时生效；版本号随 pubspec 升至 1.0.21+21
 - v1.0.19：自动升级下载器增强——新增 AppDownloader（lib/core/utils/app_downloader.dart）：实时下载速度显示、剩余时间（ETA）推算、断点续传（HTTP Range）、暂停/继续/重新下载、多线程下载（可配置默认线程数 1~8，默认 3）；更新对话框同步支持速度/剩余时间展示与暂停·继续·重下按钮及线程设置；版本号随 pubspec 升至 1.0.19+19
 - v1.0.18：K083/K084 bundle 关键 bugfix——KnowledgeQuestion 字段名修正（answer→correctIndices、analysis→explanation、difficulty: string→int、type: string→QuestionType enum）及 KnowledgeExtensionBundle id→knowledgeId；版本号随 pubspec 升至 1.0.18+18
 - v1.0.17：新增 K083「关系定位判断与应对策略（男性视角）」和 K084「关系定位判断与应对策略（女性视角）」——各含 5 个核心要点、2 套分步指导（定位判断八步法+策略选择决策树）、3 个情景练习、4 道测试题；版本号随 pubspec 升至 1.0.17+17（注：该版本含字段错误，已在 v1.0.18 中修复）
