@@ -30,6 +30,7 @@ class _KnowledgeMajorGroup {
   final List<_KnowledgeSubGroup> subs;
   _KnowledgeMajorGroup(this.major, this.subs);
   int get count => subs.fold(0, (s, g) => s + g.count);
+  List<SocialKnowledgeEntry> get entries => subs.expand((s) => s.entries).toList();
 }
 
 // ============================================================================
