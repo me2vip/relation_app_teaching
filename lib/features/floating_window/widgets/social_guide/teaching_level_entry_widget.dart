@@ -279,12 +279,14 @@ class _TeachingLevelEntryWidgetState extends State<TeachingLevelEntryWidget> {
       LevelTier.intermediate => '中级',
       LevelTier.advanced => '高级',
       LevelTier.graduation => '毕业',
+      LevelTier.master => '宗师',
     };
     final tierColor = switch (level.tier) {
       LevelTier.beginner => Colors.green,
       LevelTier.intermediate => Colors.blue,
       LevelTier.advanced => Colors.purple,
       LevelTier.graduation => Colors.amber.shade700,
+      LevelTier.master => Colors.deepOrange,
     };
 
     return Container(

@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 // 关卡等级定义
 // ============================================================================
 
-enum LevelTier { beginner, intermediate, advanced, graduation }
+enum LevelTier { beginner, intermediate, advanced, graduation, master }
 
 /// 单个关卡
 class TeachingLevel {
@@ -192,6 +192,16 @@ class LevelRegistry {
           content: '看到想认识的人，在2秒内行动。等待越久，心理障碍越大，也越容易被察觉"你在犹豫"。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '身体语言：开放姿态',
+          content: '双臂自然下垂或身体微微前倾，避免抱臂、看手机、频繁看表——这些信号在传递\'我不想被打扰\'。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '找到共同语境',
+          content: '用你们共享的当下（同一场活动、同一杯饮料、同一场雨）作为话题锚点，比凭空找话题自然十倍。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 18,
       maxTurns: 4,
@@ -199,7 +209,7 @@ class LevelRegistry {
       badgeName: '破冰先锋',
       contactMood: '中性偏友好，对方对你这个陌生人保持开放但略有戒备',
       initialMood: 0.2,
-      relatedKnowledgeIds: ['K001', 'K002', 'K040'],
+      relatedKnowledgeIds: ['K009', 'K030', 'K013', 'K001', 'K002', 'K040'],
     ),
     const TeachingLevel(
       level: 2,
@@ -219,6 +229,16 @@ class LevelRegistry {
           content: '"我就是个普通的..."会直接降低对方对你的兴趣估值。用事实而非评价来描述自己。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '价值锚点',
+          content: '介绍自己时锚定一个你真正擅长且有故事的点，而不是罗列一堆身份标签。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '故事化表达',
+          content: '用一个小故事替代形容词——\'我上周用XX方法帮朋友解决了YY\'比\'我擅长沟通\'可信十倍。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 20,
       maxTurns: 4,
@@ -227,7 +247,7 @@ class LevelRegistry {
       badgeName: '印象大师',
       contactMood: '友好但期待了解你更多',
       initialMood: 0.3,
-      relatedKnowledgeIds: ['K002', 'K008'],
+      relatedKnowledgeIds: ['K011', 'K012', 'K031', 'K002', 'K008'],
     ),
     const TeachingLevel(
       level: 3,
@@ -252,6 +272,16 @@ class LevelRegistry {
           content: '对方说完一段话后，等待2-3秒再回应。这短暂的沉默传递了"我在认真消化你说的话"，而不是"我早就准备好了我的回答"。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '提问金字塔',
+          content: '从封闭式（是/否）到底层开放式（为什么、感受如何），按对方投入度逐层放开。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '复述确认',
+          content: '用\'所以你的意思是…\'复述对方核心，既确认理解，也让他感到被听见。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 22,
       maxTurns: 5,
@@ -260,7 +290,7 @@ class LevelRegistry {
       badgeName: '倾听之星',
       contactMood: '投入分享中，略带期待',
       initialMood: 0.4,
-      relatedKnowledgeIds: ['K001', 'K003'],
+      relatedKnowledgeIds: ['K013', 'K033', 'K041', 'K001', 'K003'],
     ),
 
     // ========== 中级 L4-L6 ==========
@@ -287,6 +317,16 @@ class LevelRegistry {
           content: '使用"对了"、"说到这个"、"这让我想起"等桥接连词，让话题切换更自然。避免突然转变主题（"哎我们换个话题"）。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '冷场急救',
+          content: '沉默超过3秒就抛一个轻量观察（环境、饮品、音乐），别让尴尬发酵。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '上下文锚点',
+          content: '从对方刚说的话里挑一个词延伸，比跳到全新话题更连贯。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 25,
       maxTurns: 5,
@@ -295,7 +335,7 @@ class LevelRegistry {
       badgeName: '话题达人',
       contactMood: '刚经历短暂沉默，略有尴尬但愿意继续',
       initialMood: 0.1,
-      relatedKnowledgeIds: ['K004', 'K039'],
+      relatedKnowledgeIds: ['K014', 'K041', 'K040', 'K004', 'K039'],
     ),
     const TeachingLevel(
       level: 5,
@@ -320,6 +360,16 @@ class LevelRegistry {
           content: '沮丧/失落/愤怒/委屈/焦虑——精准识别并命名对方的情绪，比笼统说"你不开心"效果强10倍。这显示了你真正在关注ta的内在状态。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '共情句式库',
+          content: '准备3句万能共情：\'这确实不容易\'、\'换我可能也会…\'、\'你当时一定…\'。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '情绪创伤避雷',
+          content: '别在对方情绪高点给建议；先接住情绪，等他主动问\'怎么办\'再给。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 28,
       maxTurns: 5,
@@ -328,7 +378,7 @@ class LevelRegistry {
       badgeName: '共情使者',
       contactMood: '低落沮丧，需要被看见和理解',
       initialMood: -0.4,
-      relatedKnowledgeIds: ['K005', 'K033'],
+      relatedKnowledgeIds: ['K015', 'K034', 'K035', 'K005', 'K033'],
     ),
     const TeachingLevel(
       level: 6,
@@ -353,6 +403,16 @@ class LevelRegistry {
           content: '先接纳对方观点中合理的部分（YES），再在此基础上补充你的视角（AND）。这比直接说"但是"（否定对方）更容易被接受。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '立场与需求分离',
+          content: '你们立场可能相反，但底层需求常一致（都被尊重、都被听见）。先找需求交集。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '让步艺术',
+          content: '在不伤原则的小处主动让步，能换回对方在大处的配合。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 28,
       maxTurns: 6,
@@ -361,7 +421,7 @@ class LevelRegistry {
       badgeName: '和平使者',
       contactMood: '有些固执和防备，但本质上愿意沟通',
       initialMood: -0.2,
-      relatedKnowledgeIds: ['K006', 'K009'],
+      relatedKnowledgeIds: ['K016', 'K023', 'K036', 'K006', 'K009'],
     ),
 
     // ========== 高级 L7-L9 ==========
@@ -388,6 +448,16 @@ class LevelRegistry {
           content: '亚瑟·阿伦的经典研究：两个人轮流回答36个逐渐深入的问题，可以在45分钟内显著提升亲密感。核心原理：循序渐进的自我暴露+相互回应。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '脆弱的剂量',
+          content: '自我暴露要循序渐进，先小后大；一次性全倒容易把对方吓退。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '回应式暴露',
+          content: '对方暴露一点，你回曝一点，保持对称，关系才平衡。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 30,
       maxTurns: 6,
@@ -396,7 +466,7 @@ class LevelRegistry {
       badgeName: '深度连接者',
       contactMood: '放松且开放，愿意探索更深的话题',
       initialMood: 0.5,
-      relatedKnowledgeIds: ['K007', 'K010'],
+      relatedKnowledgeIds: ['K017', 'K021', 'K037', 'K007', 'K010'],
     ),
     const TeachingLevel(
       level: 8,
@@ -421,6 +491,16 @@ class LevelRegistry {
           content: '不要问"你去不去？"（是/否二元），而是问"周六下午还是周日上午？"（预设对方会去，只需选时间）。这利用了决策心理学的框架效应。',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '社会证明',
+          content: '\'我几个朋友试过都说…\'比\'我觉得特别好\'更有说服力。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '二选一而非是非题',
+          content: '把\'去不去\'换成\'周六还是周日\'，默认对方会去。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 30,
       maxTurns: 6,
@@ -429,7 +509,7 @@ class LevelRegistry {
       badgeName: '影响力之星',
       contactMood: '犹豫但友善，需要被激发兴趣',
       initialMood: 0.2,
-      relatedKnowledgeIds: ['K008', 'K022'],
+      relatedKnowledgeIds: ['K018', 'K019', 'K038', 'K008', 'K022'],
     ),
     const TeachingLevel(
       level: 9,
@@ -454,6 +534,16 @@ class LevelRegistry {
           content: '第一阶段（道歉后24h）：保持低频率、轻量互动\n第二阶段（24-72h）：逐步恢复正常话题，避免重提矛盾\n第三阶段（72h+）：关系恢复到可以自然交流时，才考虑讨论如何避免类似问题',
           isPrinciple: false,
         ),
+                      KnowledgeCard(
+          title: '修复的时机',
+          content: '对方情绪未平复时硬聊，只会二次触发；等冷却（24小时以上）再主动。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '行动补偿',
+          content: '道歉之外，用一个具体行动（带杯他喜欢的咖啡、帮个小忙）补回信任。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 32,
       maxTurns: 7,
@@ -462,7 +552,7 @@ class LevelRegistry {
       badgeName: '修复大师',
       contactMood: '受伤和疏远，但对你的主动联系仍留有窗口',
       initialMood: -0.5,
-      relatedKnowledgeIds: ['K009', 'K006'],
+      relatedKnowledgeIds: ['K020', 'K026', 'K039', 'K009', 'K006'],
     ),
 
     // ========== 毕业考核 L10 ==========
@@ -479,6 +569,16 @@ class LevelRegistry {
           content: '回顾你学到的所有核心能力：\n- 破冰与自我介绍（L1-L2）\n- 倾听与理解（L3）\n- 话题延展与深度对话（L4, L7）\n- 情绪共鸣与关怀（L5）\n- 冲突化解与非暴力沟通（L6）\n- 影响力与说服（L8）\n- 真诚道歉与关系修复（L9）',
           isPrinciple: true,
         ),
+                      KnowledgeCard(
+          title: '全场复盘',
+          content: '考后花1分钟回想哪一步最顺、哪一步最卡，比分数更能提升。',
+          isPrinciple: false,
+        ),
+                KnowledgeCard(
+          title: '迁移训练',
+          content: '把一个场景里用顺的话术，刻意搬到下一个陌生场景复用。',
+          isPrinciple: false,
+        ),
       ],
       passThreshold: 70,
       maxTurns: 12,
@@ -487,8 +587,228 @@ class LevelRegistry {
       badgeName: '社交大师',
       contactMood: '场景动态变化：从陌生友好→深度交流→短暂冲突→修复重建',
       initialMood: 0.2,
-      relatedKnowledgeIds: ['K001', 'K002', 'K003', 'K004', 'K005', 'K006', 'K007', 'K008', 'K009', 'K010'],
+      relatedKnowledgeIds: ['K011', 'K012', 'K001', 'K002', 'K003', 'K004', 'K005', 'K006', 'K007', 'K008', 'K009', 'K010'],
     ),
+    const TeachingLevel(
+      level: 11,
+      title: '关系升温',
+      subtitle: '在不越界的前提下，让关系从朋友再近一步',
+      tier: LevelTier.graduation,
+      scenarioDescription: '你们已经比较熟，近期互动不错。现在你想在不吓退对方的前提下，让关系再近一步（从朋友到更亲密）。',
+      teachingGoal: '掌握'渐进式升温'——用频率、深度、专属感三步推进而不越界。',
+      knowledgeCards: [
+        KnowledgeCard(
+          title: '升温三信号',
+          content: '对方主动找你、分享日常琐事、记得你的小事——这三个信号同时出现，说明可以升温。',
+          isPrinciple: true,
+        ),
+        KnowledgeCard(
+          title: '渐进式频率',
+          content: '不要突然每天聊天；把互动频率提升20-30%，让变化不易察觉却真实发生。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '专属感制造',
+          content: '一个只有你们懂的梗、称呼或默契，比公开示好更能建立\'我们不一样\'的连接。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '升温中的刹车',
+          content: '若对方回退（回复变慢、减少主动），立刻暂停推进，退回上一个舒适区。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '深度邀请',
+          content: '用一个需要两人协作的事（一起完成某个小目标）替代单纯约饭，关系更快升温。',
+          isPrinciple: false,
+        ),
+      ],
+      passThreshold: 34,
+      maxTurns: 7,
+      unlockCondition: '通过第10关',
+      icon: Icons.favorite_rounded,
+      badgeName: '升温专家',
+      contactMood: '对你已有好感，愿意更近一步',
+      initialMood: 0.600000,
+      relatedKnowledgeIds: ['K021', 'K022', 'K023', 'K024', 'K025', 'K026'],
+    ),
+
+    const TeachingLevel(
+      level: 12,
+      title: '边界与拒绝',
+      subtitle: '温和而坚定地说不，保护自己的社交能量',
+      tier: LevelTier.graduation,
+      scenarioDescription: '一个你不太想深交的人频繁找你帮忙、聊天，你感到被消耗，但需要不失体面地设立边界。',
+      teachingGoal: '学会温和而坚定地拒绝，保护自己的社交能量不被透支。',
+      knowledgeCards: [
+        KnowledgeCard(
+          title: '边界不是冷漠',
+          content: '清晰边界让关系更健康；含糊迁就反而积累怨气，最终爆发。',
+          isPrinciple: true,
+        ),
+        KnowledgeCard(
+          title: '三明治拒绝法',
+          content: '肯定+拒绝+替代——\'我很想帮（肯定），但这周确实排满了（拒绝），下个月我可以（替代）\'。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '延迟回应权',
+          content: '你不必秒回；\'我晚点看看\'是合法回应，能自然筛掉低优先级请求。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '去罪责化',
+          content: '拒绝时别说\'抱歉我帮不了\'，说\'这次不行\'——把事件和人格分开。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '物理边界',
+          content: '适度减少可见度（少发动态、设置免打扰）也是边界，不必解释。',
+          isPrinciple: false,
+        ),
+      ],
+      passThreshold: 34,
+      maxTurns: 7,
+      unlockCondition: '通过第11关',
+      icon: Icons.shield_rounded,
+      badgeName: '边界守护',
+      contactMood: '热情但略显索取，让你有些消耗',
+      initialMood: -0.100000,
+      relatedKnowledgeIds: ['K027', 'K028', 'K029', 'K030', 'K031', 'K032'],
+    ),
+
+    const TeachingLevel(
+      level: 13,
+      title: '社交能量管理',
+      subtitle: '按能量配额安排社交，避免透支与倦怠',
+      tier: LevelTier.graduation,
+      scenarioDescription: '你是个容易在社交后疲惫的人，刚参加完一场大型聚会，能量见底，但今晚还有另一个局。',
+      teachingGoal: '学会按能量配额安排社交，避免透支与社交倦怠。',
+      knowledgeCards: [
+        KnowledgeCard(
+          title: '能量审计',
+          content: '列出哪些人、哪些场景充电，哪些耗能；把高价值社交放在能量高峰。',
+          isPrinciple: true,
+        ),
+        KnowledgeCard(
+          title: '战略性独处',
+          content: '聚会中途去洗手间或阳台5分钟，是合法的\'微型充电\'，不是失礼。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '质量优于数量',
+          content: '与其泛泛认识10人，不如深度聊透2人——后者记忆与连接更持久。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '提前离场话术',
+          content: '\'我得先走一步，今天聊得很开心\'干净利落，无需编造长借口。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '社交预算',
+          content: '每周给自己设社交上限，超额就礼貌推掉，保护长期可持续性。',
+          isPrinciple: false,
+        ),
+      ],
+      passThreshold: 34,
+      maxTurns: 7,
+      unlockCondition: '通过第12关',
+      icon: Icons.psychology_rounded,
+      badgeName: '能量管家',
+      contactMood: '刚结束一场社交，能量偏低',
+      initialMood: -0.200000,
+      relatedKnowledgeIds: ['K033', 'K034', 'K035', 'K036', 'K037', 'K038'],
+    ),
+
+    const TeachingLevel(
+      level: 14,
+      title: '长期关系经营',
+      subtitle: '让稳定期的关系不退化、更扎实',
+      tier: LevelTier.graduation,
+      scenarioDescription: '你和对方的关系已进入稳定期，热度自然回落。你想让它不退化、甚至更扎实。',
+      teachingGoal: '掌握长期关系的'维护节奏'与'共同成长'机制。',
+      knowledgeCards: [
+        KnowledgeCard(
+          title: '关系也需要维护',
+          content: '不经营的关系会自然冷却；稳定期更要主动制造小连接。',
+          isPrinciple: true,
+        ),
+        KnowledgeCard(
+          title: '共同记忆银行',
+          content: '一起积累可回顾的体验（旅行、项目、仪式），是关系抗风险的存款。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '成长不同步应对',
+          content: '一方突飞猛进时，用\'好奇\'代替\'比较\'，把差异变成互相学习的机会。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '感恩表达',
+          content: '定期说\'谢谢你还…\'——被看见的付出才会持续。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '冲突后的修复仪式',
+          content: '和好后做一个小约定（比如\'以后吵完先抱一下\'），防止旧伤复发。',
+          isPrinciple: false,
+        ),
+      ],
+      passThreshold: 36,
+      maxTurns: 8,
+      unlockCondition: '通过第13关',
+      icon: Icons.connect_without_contact_rounded,
+      badgeName: '长期经营家',
+      contactMood: '关系稳定但有点平淡',
+      initialMood: 0.300000,
+      relatedKnowledgeIds: ['K039', 'K040', 'K041', 'K042', 'K043', 'K044'],
+    ),
+
+    const TeachingLevel(
+      level: 15,
+      title: '社交人格整合',
+      subtitle: '从用技巧到成为真诚的自己，让方法内化为本能',
+      tier: LevelTier.master,
+      scenarioDescription: '你已经掌握各项单点技巧。现在面对一个完全陌生的复杂场合，需要把它们自然融为一体的'社交直觉'。',
+      teachingGoal: '从'用技巧'过渡到'成为真诚的自己'——让所有方法内化成本能。',
+      knowledgeCards: [
+        KnowledgeCard(
+          title: '真诚是终极技巧',
+          content: '所有话术的尽头是真实；伪装会被直觉识破，真诚才可持续。',
+          isPrinciple: true,
+        ),
+        KnowledgeCard(
+          title: '观察者模式',
+          content: '进入新场域先花3分钟观察气氛、关键人物、潜规则，再决定自己的位置。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '留白与沉默',
+          content: '大师懂得不说满；适时留白让对方参与，比滔滔不绝更有掌控感。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '失败脱敏',
+          content: '把每次尴尬当数据而非事故——复盘一句\'下次换XX\'就翻篇。',
+          isPrinciple: false,
+        ),
+        KnowledgeCard(
+          title: '利他视角',
+          content: '最高级的社交是让对方感觉\'和他聊完我变好了\'——把焦点从自己移向对方。',
+          isPrinciple: false,
+        ),
+      ],
+      passThreshold: 40,
+      maxTurns: 8,
+      unlockCondition: '通过第14关',
+      icon: Icons.emoji_events_rounded,
+      badgeName: '社交宗师',
+      contactMood: '场域陌生复杂，等待你掌控',
+      initialMood: 0.000000,
+      relatedKnowledgeIds: ['K045', 'K046', 'K047', 'K048', 'K049', 'K050'],
+    ),
+
 
   ];
 }
@@ -502,7 +822,7 @@ class TeachingProgressManager extends ChangeNotifier {
 
   TeachingProgressManager()
       : _progress = List.generate(
-          10,
+          LevelRegistry.allLevels.length,
           (i) => LevelProgress(level: i + 1, unlocked: i == 0),
         );
 
@@ -511,7 +831,7 @@ class TeachingProgressManager extends ChangeNotifier {
   LevelProgress getProgress(int level) => _progress[level - 1];
 
   int get currentLevel {
-    for (int i = 9; i >= 0; i--) {
+    for (int i = _progress.length - 1; i >= 0; i--) {
       if (_progress[i].unlocked) return i + 1;
     }
     return 1;
@@ -522,7 +842,7 @@ class TeachingProgressManager extends ChangeNotifier {
 
   double get overallProgress {
     final completed = _progress.where((p) => p.completed).length;
-    return completed / 10.0;
+    return completed / _progress.length;
   }
 
   bool isUnlocked(int level) => _progress[level - 1].unlocked;
@@ -531,7 +851,7 @@ class TeachingProgressManager extends ChangeNotifier {
 
   /// 完成关卡
   void completeLevel(int level, double score) {
-    if (level < 1 || level > 10) return;
+    if (level < 1 || level > _progress.length) return;
     final idx = level - 1;
     final old = _progress[idx];
     _progress[idx] = old.copyWith(
@@ -541,7 +861,7 @@ class TeachingProgressManager extends ChangeNotifier {
       attemptCount: old.attemptCount + 1,
     );
     // 解锁下一关
-    if (level < 10) {
+    if (level < _progress.length) {
       final nextIdx = level;
       _progress[nextIdx] = _progress[nextIdx].copyWith(unlocked: true);
     }
@@ -550,7 +870,7 @@ class TeachingProgressManager extends ChangeNotifier {
 
   /// 记录尝试（未通过）
   void recordAttempt(int level) {
-    if (level < 1 || level > 10) return;
+    if (level < 1 || level > _progress.length) return;
     final idx = level - 1;
     _progress[idx] = _progress[idx].copyWith(
       attemptCount: _progress[idx].attemptCount + 1,
@@ -6886,11 +7206,227 @@ class ModeContentRegistry {
   }
 
   /// 关卡测试题注册表
-  class QuizRegistry {
+  final Map<TeachingMode, List<QuizQuestion>> _modeQuizBank = {
+  TeachingMode.pursueFemale: const [
+            QuizQuestion(
+        question: '女生说\'我最近好累\'，最佳回应是？',
+        options: ['追问具体原因并给建议', '共情+留空间\'听起来真的不容易，想聊我在\'', '转移话题讲趣事', '比较\'谁不累\''],
+        correctIndex: 1,
+        explanation: '先接住情绪，再留空间，不急着解决。',
+        relatedKnowledgeId: 'K021',
+      ),
+            QuizQuestion(
+        question: '想约女生出来，最稳妥的框架是？',
+        options: ['直接问\'做我女朋友吗\'', '\'周六下午还是周日上午一起去看展？\'', '等她主动约', '群发邀约'],
+        correctIndex: 1,
+        explanation: '二选一默认她会去，降低拒绝成本。',
+        relatedKnowledgeId: 'K022',
+      ),
+            QuizQuestion(
+        question: '聊天中女生回复变慢，应该？',
+        options: ['连环追问为什么', '暂停，退回舒适区观察', '立刻表白', '删好友'],
+        correctIndex: 1,
+        explanation: '回退是节奏太快的信号，应先暂停。',
+        relatedKnowledgeId: 'K024',
+      ),
+  ],
+  TeachingMode.pursueMale: const [
+            QuizQuestion(
+        question: '男生对你好感上升的信号是？',
+        options: ['主动分享日常/记得小事', '只回\'嗯\'', '从不主动', '回避独处'],
+        correctIndex: 0,
+        explanation: '主动分享与记得小事是投入的信号。',
+        relatedKnowledgeId: 'K021',
+      ),
+            QuizQuestion(
+        question: '想拉近关系，好的做法是？',
+        options: ['当众表白', '用共同兴趣制造独处协作', '频繁查岗', '贬低自己博同情'],
+        correctIndex: 1,
+        explanation: '共同兴趣下的独处最自然。',
+        relatedKnowledgeId: 'K022',
+      ),
+            QuizQuestion(
+        question: '男生沉默时，你该？',
+        options: ['替他焦虑填满话题', '容许沉默给空间', '追问\'你不爱我了?\'', '冷战'],
+        correctIndex: 1,
+        explanation: '男性常需沉默处理情绪，给空间更稳。',
+        relatedKnowledgeId: 'K024',
+      ),
+  ],
+  TeachingMode.maintainRelationship: const [
+            QuizQuestion(
+        question: '关系稳定期最容易出问题的是？',
+        options: ['缺乏主动维护', '太亲密', '见面太多', '太诚实'],
+        correctIndex: 0,
+        explanation: '不维护的关系会自然冷却。',
+        relatedKnowledgeId: 'K039',
+      ),
+            QuizQuestion(
+        question: '修复吵架后的好方式是？',
+        options: ['翻旧账争对错', '先道歉+具体行动补偿', '冷战等对方先低头', '假装没发生'],
+        correctIndex: 1,
+        explanation: '先道歉再行动补偿，比争对错更能修复。',
+        relatedKnowledgeId: 'K039',
+      ),
+            QuizQuestion(
+        question: '让对方持续付出的关键是？',
+        options: ['把付出视为理所当然', '及时看见并致谢', '故意试探', '减少回应'],
+        correctIndex: 1,
+        explanation: '被看见的付出才会持续。',
+        relatedKnowledgeId: 'K042',
+      ),
+  ],
+  TeachingMode.workplaceSocial: const [
+            QuizQuestion(
+        question: '职场第一次发言，原则是？',
+        options: ['抢风头', '先倾听再基于事实补充', '全程不说话', '否定所有人'],
+        correctIndex: 1,
+        explanation: '先听后说，基于事实最有分量。',
+        relatedKnowledgeId: 'K008',
+      ),
+            QuizQuestion(
+        question: '被同事抢功，应对是？',
+        options: ['当众撕破脸', '事后平静陈述事实+留证据', '忍气吞声', '向全公司群发'],
+        correctIndex: 1,
+        explanation: '平静陈述事实并留痕最专业。',
+        relatedKnowledgeId: 'K016',
+      ),
+            QuizQuestion(
+        question: '向上沟通汇报，关键是？',
+        options: ['只说结果', '结论先行+关键依据', '堆砌细节', '等被问才说'],
+        correctIndex: 1,
+        explanation: '结论先行让老板快速抓住重点。',
+        relatedKnowledgeId: 'K018',
+      ),
+  ],
+  TeachingMode.groupSocial: const [
+            QuizQuestion(
+        question: '主持/控场时冷场，应？',
+        options: ['自己一直讲', '抛开放式问题给现场', '假装没发生', '离场'],
+        correctIndex: 1,
+        explanation: '把话题抛回现场，激活参与。',
+        relatedKnowledgeId: 'K004',
+      ),
+            QuizQuestion(
+        question: '群体里建立存在感，靠？',
+        options: ['大声打断', '在关键节点给有价值反馈', '抢话', '沉默到底'],
+        correctIndex: 1,
+        explanation: '有价值的反馈比音量更吸睛。',
+        relatedKnowledgeId: 'K004',
+      ),
+            QuizQuestion(
+        question: '演讲紧张，缓解法是？',
+        options: ['背全文', '只记结构+眼神交流', '不看观众', '加快语速'],
+        correctIndex: 1,
+        explanation: '记结构而非背稿，更自然从容。',
+        relatedKnowledgeId: 'K037',
+      ),
+  ],
+  TeachingMode.familyCommunication: const [
+            QuizQuestion(
+        question: '和长辈观念冲突，宜？',
+        options: ['强行说服', '先接纳情绪再温和表达自己', '吵到底', '完全顺从'],
+        correctIndex: 1,
+        explanation: '先接情绪再表达，冲突才不升级。',
+        relatedKnowledgeId: 'K023',
+      ),
+            QuizQuestion(
+        question: '亲子沟通中，孩子愿意说的是？',
+        options: ['被评判时', '被真正倾听不打断时', '被比较时', '被威胁时'],
+        correctIndex: 1,
+        explanation: '不被打断的倾听让孩子开口。',
+        relatedKnowledgeId: 'K003',
+      ),
+            QuizQuestion(
+        question: '伴侣家庭矛盾，处理是？',
+        options: ['站队原生家庭', '先护伴侣再私下沟通', '回避', '扩大争吵'],
+        correctIndex: 1,
+        explanation: '先护伴侣再私下沟通最稳妥。',
+        relatedKnowledgeId: 'K039',
+      ),
+  ],
+  TeachingMode.strangerIcebreaking: const [
+            QuizQuestion(
+        question: '搭讪最自然的开场是？',
+        options: ['评价共享情境', '直接要微信', '长篇自我介绍', '夸外貌'],
+        correctIndex: 0,
+        explanation: '共享情境最不突兀。',
+        relatedKnowledgeId: 'K001',
+      ),
+            QuizQuestion(
+        question: '对方戒备时，该？',
+        options: ['逼近', '退半步给空间+轻量话题', '追问隐私', '离开'],
+        correctIndex: 1,
+        explanation: '退半步降低压迫感。',
+        relatedKnowledgeId: 'K040',
+      ),
+            QuizQuestion(
+        question: '破冰后维持，靠？',
+        options: ['连续提问', '分享一点自己换对等暴露', '炫耀', '沉默'],
+        correctIndex: 1,
+        explanation: '对等暴露让关系平衡推进。',
+        relatedKnowledgeId: 'K037',
+      ),
+  ],
+  TeachingMode.crossCulture: const [
+            QuizQuestion(
+        question: '跨背景交流，首要是？',
+        options: ['假设对方懂你梗', '先了解对方语境再表达', '用自己圈术语', '评判差异'],
+        correctIndex: 1,
+        explanation: '先理解语境再表达，避免误读。',
+        relatedKnowledgeId: 'K001',
+      ),
+            QuizQuestion(
+        question: '误解发生时，宜？',
+        options: ['指责对方', '暂停确认\'我理解的是否是…\'', '嘲笑', '退出'],
+        correctIndex: 1,
+        explanation: '暂停确认能快速澄清误解。',
+        relatedKnowledgeId: 'K003',
+      ),
+            QuizQuestion(
+        question: '建立跨圈信任，靠？',
+        options: ['标签化对方', '具体小事上的可靠', '频繁说教', '保持距离'],
+        correctIndex: 1,
+        explanation: '小事可靠积累出信任。',
+        relatedKnowledgeId: 'K037',
+      ),
+  ],
+  TeachingMode.onlineSocial: const [
+            QuizQuestion(
+        question: '线上聊天升温，关键是？',
+        options: ['秒回轰炸', '有来有回+适时留白', '只发表情', '长篇语音'],
+        correctIndex: 1,
+        explanation: '留白让对方有呼吸感。',
+        relatedKnowledgeId: 'K005',
+      ),
+            QuizQuestion(
+        question: '对方已读不回，应？',
+        options: ['连发追问', '不再追问，过阵子换轻量话题', '拉黑', '质问'],
+        correctIndex: 1,
+        explanation: '不追问，过阵子轻量重启。',
+        relatedKnowledgeId: 'K040',
+      ),
+            QuizQuestion(
+        question: '朋友圈互动，加分的是？',
+        options: ['群发广告', '真诚评论对方内容', '仅点赞不说话', '炫耀'],
+        correctIndex: 1,
+        explanation: '真诚评论比群发更有温度。',
+        relatedKnowledgeId: 'K005',
+      ),
+  ],
+};
+
+class QuizRegistry {
     QuizRegistry._();
 
     /// 获取特定关卡的测试题，返回 null 表示该关卡无测试题
-    static List<QuizQuestion>? getQuiz(int level) => _quizRegistry[level];
+    static List<QuizQuestion>? getQuiz(int level, [TeachingMode? mode]) {
+      if (mode != null) {
+        final bank = _modeQuizBank[mode];
+        if (bank != null && bank.isNotEmpty) return bank;
+      }
+      return _quizRegistry[level];
+    }
 
     static final Map<int, List<QuizQuestion>> _quizRegistry = {
       1: [
@@ -6908,7 +7444,21 @@ class ModeContentRegistry {
           explanation: '开场道歉是自我贬低，会让对方觉得你确实不行。自信比完美更重要。',
           relatedKnowledgeId: 'K040',
         ),
-      ],
+                  QuizQuestion(
+        question: '开场时身体语言最加分的是？',
+        options: ['抱臂防御', '开放姿态+偶尔眼神接触', '一直看手机', '频繁看表'],
+        correctIndex: 1,
+        explanation: '开放姿态传递友好与可接近，抱臂看手机则像在拒绝交流。',
+        relatedKnowledgeId: 'K001',
+      ),
+            QuizQuestion(
+        question: '找不到话题时最稳的锚点是？',
+        options: ['追问隐私', '你们共享的当下情境', '炫耀自己', '批评环境'],
+        correctIndex: 1,
+        explanation: '共享情境是双方都看得见的安全话题，最不易冷场。',
+        relatedKnowledgeId: 'K040',
+      ),
+    ],
       2: [
         const QuizQuestion(
           question: '自我介绍时最吸引人的结构是？',
@@ -6923,7 +7473,21 @@ class ModeContentRegistry {
           correctIndex: 2,
           explanation: '职业+有趣点让回答不枯燥，反问对方把对话变成乒乓球而非采访。',
         ),
-      ],
+                  QuizQuestion(
+        question: '自我介绍里最能制造记忆点的是？',
+        options: ['罗列头衔', '一个有趣的价值钩子', '自贬', '长背景'],
+        correctIndex: 1,
+        explanation: '钩子引发好奇，让人想继续追问。',
+        relatedKnowledgeId: 'K011',
+      ),
+            QuizQuestion(
+        question: '分享自己时用故事替代形容词，原因是？',
+        options: ['更省字', '更可信可感知', '更正式', '更简短'],
+        correctIndex: 1,
+        explanation: '故事有画面感，比形容词更能让人记住你。',
+        relatedKnowledgeId: 'K012',
+      ),
+    ],
       3: [
         const QuizQuestion(
           question: '倾听时最重要的技巧是？',
@@ -6938,7 +7502,21 @@ class ModeContentRegistry {
           correctIndex: 2,
           explanation: '"你想太多"是否定对方感受，会立刻关闭对话。应先共情再引导。',
         ),
-      ],
+                  QuizQuestion(
+        question: '对方倾诉时最好的回应节奏是？',
+        options: ['立刻给建议', '先复述确认再回应', '打断补充自己', '沉默不语'],
+        correctIndex: 1,
+        explanation: '先确认理解，对方才会觉得被真正听见。',
+        relatedKnowledgeId: 'K003',
+      ),
+            QuizQuestion(
+        question: '\'然后呢？\'这类追问的作用是？',
+        options: ['显得敷衍', '鼓励对方继续展开', '结束话题', '转移注意'],
+        correctIndex: 1,
+        explanation: '开放式追问让对方感到被兴趣驱动。',
+        relatedKnowledgeId: 'K041',
+      ),
+    ],
       4: [
         const QuizQuestion(
           question: '对话出现冷场时，最好的做法是？',
@@ -6954,7 +7532,21 @@ class ModeContentRegistry {
           explanation: '5W1H（What/Why/When/Where/Who/How）可以从一个点延展出6个方向。',
           relatedKnowledgeId: 'K044',
         ),
-      ],
+                  QuizQuestion(
+        question: '冷场超过3秒，宜？',
+        options: ['假装没事', '抛轻量观察救场', '立刻离场', '指责对方'],
+        correctIndex: 1,
+        explanation: '轻量观察能自然重启对话而不显刻意。',
+        relatedKnowledgeId: 'K014',
+      ),
+            QuizQuestion(
+        question: '话题从对方刚说的话里延伸，好处是？',
+        options: ['更跳脱', '更连贯自然', '更省事', '更刺激'],
+        correctIndex: 1,
+        explanation: '上下文锚点让转折顺滑，不突兀。',
+        relatedKnowledgeId: 'K041',
+      ),
+    ],
       5: [
         const QuizQuestion(
           question: '对方情绪低落时，最有效的共情方式是？',
@@ -6969,7 +7561,21 @@ class ModeContentRegistry {
           correctIndex: 2,
           explanation: '"别想太多"否定对方感受，是典型的廉价安慰。应认可情绪而非压制。',
         ),
-      ],
+                  QuizQuestion(
+        question: '对方情绪高点时，不宜？',
+        options: ['先接住情绪', '立刻给解决方案', '命名情绪', '共情'],
+        correctIndex: 1,
+        explanation: '情绪高点先给建议会被视为否定，应先共情。',
+        relatedKnowledgeId: 'K034',
+      ),
+            QuizQuestion(
+        question: '精准命名对方情绪的作用是？',
+        options: ['显得唠叨', '让对方感到被真正看见', '结束对话', '转移话题'],
+        correctIndex: 1,
+        explanation: '被准确命名情绪，人会感到被深度理解。',
+        relatedKnowledgeId: 'K035',
+      ),
+    ],
       6: [
         const QuizQuestion(
           question: '产生分歧时，最重要的是？',
@@ -6984,7 +7590,21 @@ class ModeContentRegistry {
           correctIndex: 2,
           explanation: '坦诚承认错误反而赢得尊重。找借口和硬撑只会失去信任。',
         ),
-      ],
+                  QuizQuestion(
+        question: '冲突中先找什么交集？',
+        options: ['谁声音大', '双方的底层需求', '谁有理', '谁先说话'],
+        correctIndex: 1,
+        explanation: '立场或相反，但需求常一致，先找需求交集。',
+        relatedKnowledgeId: 'K016',
+      ),
+            QuizQuestion(
+        question: '非暴力沟通的第一步是？',
+        options: ['指责', '不带评判地描述观察', '威胁', '翻旧账'],
+        correctIndex: 1,
+        explanation: '先描述事实而非评判，才能开启对话。',
+        relatedKnowledgeId: 'K023',
+      ),
+    ],
       7: [
         const QuizQuestion(
           question: '把关系从浅层推向深层，最关键的是？',
@@ -6999,7 +7619,21 @@ class ModeContentRegistry {
           correctIndex: 1,
           explanation: '假设性问题（"如果...你会..."）容易引发深度对话，需要信任基础，否则显得突兀。',
         ),
-      ],
+                  QuizQuestion(
+        question: '自我暴露的原则是？',
+        options: ['一次性全倒', '循序渐进小到大', '只说优点', '永不暴露'],
+        correctIndex: 1,
+        explanation: '渐进暴露让对方有消化空间，关系更稳。',
+        relatedKnowledgeId: 'K017',
+      ),
+            QuizQuestion(
+        question: '对方暴露一点你回曝一点，是为了？',
+        options: ['显得对等', '保持关系平衡', '压倒对方', '敷衍'],
+        correctIndex: 1,
+        explanation: '对称暴露维持关系平衡，避免一方过度敞开。',
+        relatedKnowledgeId: 'K037',
+      ),
+    ],
       8: [
         const QuizQuestion(
           question: '邀约对方时，降低决策成本的关键是？',
@@ -7013,7 +7647,21 @@ class ModeContentRegistry {
           correctIndex: 1,
           explanation: '低承诺策略（"先去看看，无聊随时撤"）降低对方心理门槛，比软磨硬泡更有效。',
         ),
-      ],
+                  QuizQuestion(
+        question: '邀请时\'周六还是周日\'利用了？',
+        options: ['框架效应', '随机', '运气', '权威'],
+        correctIndex: 0,
+        explanation: '预设对方会去，只问时间，降低拒绝成本。',
+        relatedKnowledgeId: 'K019',
+      ),
+            QuizQuestion(
+        question: '相比\'我觉得特别好\'，更好的影响方式是？',
+        options: ['重复推销', '分享真实个人体验', '命令', '威胁'],
+        correctIndex: 1,
+        explanation: '真实体验比空泛夸赞更有说服力。',
+        relatedKnowledgeId: 'K018',
+      ),
+    ],
       9: [
         const QuizQuestion(
           question: '道歉时最不该做的是？',
@@ -7028,7 +7676,21 @@ class ModeContentRegistry {
           correctIndex: 1,
           explanation: '发最后一条轻松消息后停止主动，保留体面。追问和威胁只会把对方推更远。',
         ),
-      ],
+                  QuizQuestion(
+        question: '对方情绪未平复时硬聊，容易？',
+        options: ['修复更快', '二次触发矛盾', '拉近距离', '被感谢'],
+        correctIndex: 1,
+        explanation: '情绪未平复时沟通会重燃冲突。',
+        relatedKnowledgeId: 'K020',
+      ),
+            QuizQuestion(
+        question: '真诚道歉六要素中，缺任何一条会？',
+        options: ['更真诚', '显得不真诚', '更快结束', '无影响'],
+        correctIndex: 1,
+        explanation: '缺要素的道歉容易被读成敷衍。',
+        relatedKnowledgeId: 'K026',
+      ),
+    ],
       10: [
         const QuizQuestion(
           question: '综合社交中，"先给后要"法则指的是？',
@@ -7044,6 +7706,205 @@ class ModeContentRegistry {
           explanation: '控场的本质是服务——让每个人都能参与和发光，而非自我表演。',
           relatedKnowledgeId: 'K040',
         ),
+                  QuizQuestion(
+        question: '毕业考核后最该做的是？',
+        options: ['只看分数', '复盘哪步顺哪步卡', '立刻庆祝', '忘记'],
+        correctIndex: 1,
+        explanation: '复盘比分数更能转化为能力。',
+        relatedKnowledgeId: 'K011',
+      ),
+            QuizQuestion(
+        question: '把顺手的话术刻意搬到新场景，叫？',
+        options: ['迁移训练', '重复', '模仿', '放弃'],
+        correctIndex: 0,
+        explanation: '迁移训练让单点能力泛化到更多场合。',
+        relatedKnowledgeId: 'K012',
+      ),
+    ],
+        11: [
+            QuizQuestion(
+        question: '判断可以升温的三个信号是？',
+        options: ['对方主动找你/分享琐事/记得小事', '对方已读不回', '对方回避', '对方敷衍'],
+        correctIndex: 0,
+        explanation: '主动、分享、记得小事，是升温窗口的典型信号。',
+        relatedKnowledgeId: 'K021',
+      ),
+            QuizQuestion(
+        question: '升温频率应如何调整？',
+        options: ['突然每天聊', '提升20-30%不易察觉', '完全不聊', '狂发消息'],
+        correctIndex: 1,
+        explanation: '渐进微调比突变更不易让对方防备。',
+        relatedKnowledgeId: 'K022',
+      ),
+            QuizQuestion(
+        question: '制造\'我们不一样\'的连接靠？',
+        options: ['公开示好', '专属梗/称呼/默契', '群发', '比较'],
+        correctIndex: 1,
+        explanation: '专属感让关系区别于泛泛之交。',
+        relatedKnowledgeId: 'K023',
+      ),
+            QuizQuestion(
+        question: '对方回退时应？',
+        options: ['加速推进', '暂停退回舒适区', '质问', '拉黑'],
+        correctIndex: 1,
+        explanation: '对方回退说明节奏太快，应退回上一舒适区。',
+        relatedKnowledgeId: 'K024',
+      ),
+            QuizQuestion(
+        question: '比单纯约饭更能升温的是？',
+        options: ['一起完成需要协作的事', '各自玩手机', '大型群体聚会', '不联系'],
+        correctIndex: 0,
+        explanation: '协作产生共同记忆，比吃饭更能拉近距离。',
+        relatedKnowledgeId: 'K025',
+      ),
       ],
-    };
+      12: [
+            QuizQuestion(
+        question: '温和拒绝的核心是？',
+        options: ['模糊迁就', '清晰边界', '全盘答应', '立刻翻脸'],
+        correctIndex: 1,
+        explanation: '清晰边界保护双方关系健康。',
+        relatedKnowledgeId: 'K027',
+      ),
+            QuizQuestion(
+        question: '三明治拒绝法的顺序是？',
+        options: ['拒绝-肯定-替代', '肯定-拒绝-替代', '替代-肯定-拒绝', '否定-否定-否定'],
+        correctIndex: 1,
+        explanation: '先肯定情绪，再拒绝，最后给替代，最易被接受。',
+        relatedKnowledgeId: 'K028',
+      ),
+            QuizQuestion(
+        question: '\'我晚点看看\'属于？',
+        options: ['失礼', '合法的延迟回应权', '承诺', '借口'],
+        correctIndex: 1,
+        explanation: '延迟回应是筛优先级的正当方式。',
+        relatedKnowledgeId: 'K029',
+      ),
+            QuizQuestion(
+        question: '把\'抱歉我帮不了\'换成\'这次不行\'，是为了？',
+        options: ['显得强硬', '把事件与人格分开去罪责化', '讨好', '逃避'],
+        correctIndex: 1,
+        explanation: '去罪责化让拒绝不伤关系。',
+        relatedKnowledgeId: 'K030',
+      ),
+            QuizQuestion(
+        question: '减少可见度（如少发动态）属于？',
+        options: ['冷漠', '一种物理边界', '道歉', '示弱'],
+        correctIndex: 1,
+        explanation: '物理边界也是边界，不必解释。',
+        relatedKnowledgeId: 'K031',
+      ),
+      ],
+      13: [
+            QuizQuestion(
+        question: '社交能量管理首先要？',
+        options: ['硬撑', '做能量审计', '多社交', '少睡'],
+        correctIndex: 1,
+        explanation: '先弄清楚什么充电、什么耗能。',
+        relatedKnowledgeId: 'K033',
+      ),
+            QuizQuestion(
+        question: '聚会中途去阳台5分钟是？',
+        options: ['失礼', '合法的微型充电', '逃跑', '冷漠'],
+        correctIndex: 1,
+        explanation: '短暂独处是回血，不是失礼。',
+        relatedKnowledgeId: 'K034',
+      ),
+            QuizQuestion(
+        question: '相比认识10人，更好的是？',
+        options: ['深度聊透2人', '泛泛打招呼', '群发名片', '炫技'],
+        correctIndex: 0,
+        explanation: '深度连接比广度更持久。',
+        relatedKnowledgeId: 'K035',
+      ),
+            QuizQuestion(
+        question: '提前离场话术应？',
+        options: ['编造长借口', '干净利落致谢离开', '不告而别', '争吵'],
+        correctIndex: 1,
+        explanation: '利落致谢比长借口更得体。',
+        relatedKnowledgeId: 'K036',
+      ),
+            QuizQuestion(
+        question: '社交预算的作用是？',
+        options: ['越多越好', '保护长期可持续性', '显忙', '拒绝所有'],
+        correctIndex: 1,
+        explanation: '预算防止透支，让社交可长期维持。',
+        relatedKnowledgeId: 'K037',
+      ),
+      ],
+      14: [
+            QuizQuestion(
+        question: '稳定期关系最怕？',
+        options: ['不经营自然冷却', '太亲密', '见面多', '太诚实'],
+        correctIndex: 0,
+        explanation: '不主动维护，关系会自然降温。',
+        relatedKnowledgeId: 'K039',
+      ),
+            QuizQuestion(
+        question: '共同记忆银行指的是？',
+        options: ['存钱', '一起积累可回顾的体验', '记账', '攀比'],
+        correctIndex: 1,
+        explanation: '共同体验是关系的抗风险存款。',
+        relatedKnowledgeId: 'K040',
+      ),
+            QuizQuestion(
+        question: '一方突飞猛进时，正确态度是？',
+        options: ['比较', '好奇代替比较互相学习', '贬低', '疏远'],
+        correctIndex: 1,
+        explanation: '用好奇把差异变成学习机会。',
+        relatedKnowledgeId: 'K041',
+      ),
+            QuizQuestion(
+        question: '定期表达感恩，作用是？',
+        options: ['多余', '让付出被看见而持续', '尴尬', '结束关系'],
+        correctIndex: 1,
+        explanation: '被看见的付出才会持续。',
+        relatedKnowledgeId: 'K042',
+      ),
+            QuizQuestion(
+        question: '冲突后的修复仪式能？',
+        options: ['没用', '防止旧伤复发', '激化矛盾', '遗忘'],
+        correctIndex: 1,
+        explanation: '小约定能阻断旧伤循环。',
+        relatedKnowledgeId: 'K043',
+      ),
+      ],
+      15: [
+            QuizQuestion(
+        question: '所有话术的终点是？',
+        options: ['套路', '真诚', '音量', '速度'],
+        correctIndex: 1,
+        explanation: '真诚才可持续，伪装终被识破。',
+        relatedKnowledgeId: 'K045',
+      ),
+            QuizQuestion(
+        question: '进入陌生场域先？',
+        options: ['抢着说话', '观察3分钟气氛与关键人物', '立刻离场', '选边站'],
+        correctIndex: 1,
+        explanation: '先观察再定位，避免踩雷。',
+        relatedKnowledgeId: 'K046',
+      ),
+            QuizQuestion(
+        question: '大师懂得？',
+        options: ['说满', '留白让对方参与', '滔滔不绝', '打断'],
+        correctIndex: 1,
+        explanation: '留白比说满更有掌控感。',
+        relatedKnowledgeId: 'K047',
+      ),
+            QuizQuestion(
+        question: '把尴尬当？',
+        options: ['事故', '数据复盘翻篇', '灾难', '耻辱'],
+        correctIndex: 1,
+        explanation: '把尴尬当数据，复盘即翻篇。',
+        relatedKnowledgeId: 'K048',
+      ),
+            QuizQuestion(
+        question: '最高级社交让对方感觉？',
+        options: ['被评判', '聊完自己变好了', '被利用', '被忽略'],
+        correctIndex: 1,
+        explanation: '利他视角让对方因你而变好。',
+        relatedKnowledgeId: 'K049',
+      ),
+      ],
+  };
   }

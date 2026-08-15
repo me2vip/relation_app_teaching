@@ -1380,7 +1380,7 @@ class _TeachingDialogueWidgetState extends State<TeachingDialogueWidget> {
   // ========================================================================
 
   void _startQuiz() {
-    final quiz = QuizRegistry.getQuiz(_level.level);
+    final quiz = QuizRegistry.getQuiz(_level.level, widget.mode);
     if (quiz == null || quiz.isEmpty) {
       AppToast.info(context, '本关暂无测试题', duration: const Duration(seconds: 2));
       return;
@@ -1422,7 +1422,7 @@ class _TeachingDialogueWidgetState extends State<TeachingDialogueWidget> {
   }
 
   Widget _buildQuizPanel(ColorScheme cs) {
-    final quiz = QuizRegistry.getQuiz(_level.level) ?? [];
+    final quiz = QuizRegistry.getQuiz(_level.level, widget.mode) ?? [];
     if (quiz.isEmpty) return const SizedBox.shrink();
 
     final question = quiz[_quizIndex];
