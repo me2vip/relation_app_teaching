@@ -595,7 +595,7 @@ class LevelRegistry {
       subtitle: '在不越界的前提下，让关系从朋友再近一步',
       tier: LevelTier.graduation,
       scenarioDescription: '你们已经比较熟，近期互动不错。现在你想在不吓退对方的前提下，让关系再近一步（从朋友到更亲密）。',
-      teachingGoal: '掌握'渐进式升温'——用频率、深度、专属感三步推进而不越界。',
+      teachingGoal: '掌握“渐进式升温”——用频率、深度、专属感三步推进而不越界。',
       knowledgeCards: [
         KnowledgeCard(
           title: '升温三信号',
@@ -727,7 +727,7 @@ class LevelRegistry {
       subtitle: '让稳定期的关系不退化、更扎实',
       tier: LevelTier.graduation,
       scenarioDescription: '你和对方的关系已进入稳定期，热度自然回落。你想让它不退化、甚至更扎实。',
-      teachingGoal: '掌握长期关系的'维护节奏'与'共同成长'机制。',
+      teachingGoal: '掌握长期关系的“维护节奏”与“共同成长”机制。',
       knowledgeCards: [
         KnowledgeCard(
           title: '关系也需要维护',
@@ -770,8 +770,8 @@ class LevelRegistry {
       title: '社交人格整合',
       subtitle: '从用技巧到成为真诚的自己，让方法内化为本能',
       tier: LevelTier.master,
-      scenarioDescription: '你已经掌握各项单点技巧。现在面对一个完全陌生的复杂场合，需要把它们自然融为一体的'社交直觉'。',
-      teachingGoal: '从'用技巧'过渡到'成为真诚的自己'——让所有方法内化成本能。',
+      scenarioDescription: '你已经掌握各项单点技巧。现在面对一个完全陌生的复杂场合，需要把它们自然融为一体的“社交直觉”。',
+      teachingGoal: '从“用技巧”过渡到“成为真诚的自己”——让所有方法内化成本能。',
       knowledgeCards: [
         KnowledgeCard(
           title: '真诚是终极技巧',
