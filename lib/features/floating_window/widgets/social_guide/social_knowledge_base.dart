@@ -12,6 +12,25 @@ import 'knowledge_extensions.dart';
 import 'knowledge_practice_page.dart';
 import 'knowledge_test_page.dart';
 import 'knowledge_extract_page.dart';
+import 'knowledge_detail_page.dart';
+
+// 知识词典三种显示方式
+enum _KnowledgeDisplayMode { list, mindmap, tree }
+
+// 导图/树 用的层级分组辅助类
+class _KnowledgeSubGroup {
+  final String category;
+  final List<SocialKnowledgeEntry> entries;
+  _KnowledgeSubGroup(this.category, this.entries);
+  int get count => entries.length;
+}
+
+class _KnowledgeMajorGroup {
+  final KnowledgeMajorCategory major;
+  final List<_KnowledgeSubGroup> subs;
+  _KnowledgeMajorGroup(this.major, this.subs);
+  int get count => subs.fold(0, (s, g) => s + g.count);
+}
 
 // ============================================================================
 // 社交知识词典浏览 Widget
@@ -31,6 +50,7 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
   int? _selectedLevel;
   TargetAudience? _selectedAudience; // 性别适用对象筛选：all/male/female
   String _searchQuery = '';
+  _KnowledgeDisplayMode _mode = _KnowledgeDisplayMode.list;
   final _searchController = TextEditingController();
   final Set<String> _expandedIds = {};
 
@@ -93,14 +113,22 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
       children: [
         // 搜索栏
         _buildSearchBar(cs),
+        // 显示方式切换：列表 / 导图 / 树
+        _buildModeSwitch(cs),
         // 大分类筛选（顶层导航）
         _buildMajorCategoryFilter(cs),
         // 子分类筛选（联动大分类）
         _buildCategoryFilter(cs),
-        // 性别适用对象筛选（在分类下面新增一行）
+        // 性别适用对象筛选
         _buildAudienceFilter(cs),
-        // 内容列表
-        Expanded(child: _buildEntryList(cs)),
+        // 内容区（按显示方式切换）
+        Expanded(
+          child: switch (_mode) {
+            _KnowledgeDisplayMode.list => _buildEntryList(cs),
+            _KnowledgeDisplayMode.mindmap => _buildMindMap(cs),
+            _KnowledgeDisplayMode.tree => _buildTree(cs),
+          },
+        ),
       ],
     );
   }
@@ -983,5 +1011,347 @@ class _SocialKnowledgeBaseWidgetState extends State<SocialKnowledgeBaseWidget> {
       case '群体社交': return Icons.groups_rounded;
       default: return Icons.menu_book_rounded;
     }
+  }
+
+  // ===================== 显示方式：列表 / 导图 / 树 =====================
+
+  /// 把当前筛选结果按「大分类 → 子分类」分组，供导图与树使用
+  List<_KnowledgeMajorGroup> get _hierarchy {
+    final entries = _filteredEntries;
+    final byMajor = <KnowledgeMajorCategory, Map<String, List<SocialKnowledgeEntry>>>{};
+    for (final e in entries) {
+      byMajor
+          .putIfAbsent(e.majorCategory, () => <String, List<SocialKnowledgeEntry>>{})
+          .putIfAbsent(e.category, () => <SocialKnowledgeEntry>[])
+          .add(e);
+    }
+    final result = <_KnowledgeMajorGroup>[];
+    for (final major in SocialKnowledgeBase.majorCategories) {
+      final subsMap = byMajor[major];
+      if (subsMap == null || subsMap.isEmpty) continue;
+      final subs = <_KnowledgeSubGroup>[];
+      for (final cat in SocialKnowledgeBase.categories) {
+        final list = subsMap[cat];
+        if (list == null || list.isEmpty) continue;
+        subs.add(_KnowledgeSubGroup(cat, list));
+      }
+      if (subs.isNotEmpty) result.add(_KnowledgeMajorGroup(major, subs));
+    }
+    return result;
+  }
+
+  Widget _buildModeSwitch(ColorScheme cs) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 6, 12, 4),
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          _modeButton(_KnowledgeDisplayMode.list, Icons.view_agenda_rounded, '列表', cs),
+          _modeButton(_KnowledgeDisplayMode.mindmap, Icons.bubble_chart_rounded, '导图', cs),
+          _modeButton(_KnowledgeDisplayMode.tree, Icons.account_tree_rounded, '树形', cs),
+        ],
+      ),
+    );
+  }
+
+  Widget _modeButton(_KnowledgeDisplayMode mode, IconData icon, String label, ColorScheme cs) {
+    final selected = _mode == mode;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _mode = mode),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 7),
+          decoration: BoxDecoration(
+            color: selected ? cs.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 15, color: selected ? cs.onPrimary : cs.onSurfaceVariant),
+              const SizedBox(width: 5),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _emptyState(ColorScheme cs) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.menu_book_rounded, size: 48, color: cs.onSurfaceVariant.withValues(alpha: 0.4)),
+          const SizedBox(height: 12),
+          Text(
+            _searchQuery.isNotEmpty ? '未找到匹配的知识点' : '选择分类浏览知识点',
+            style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------- 树形视图 ----------------------
+  Widget _buildTree(ColorScheme cs) {
+    final groups = _hierarchy;
+    if (groups.isEmpty) return _emptyState(cs);
+    return ListView.separated(
+      padding: const EdgeInsets.all(12),
+      itemCount: groups.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 6),
+      itemBuilder: (ctx, i) => _buildTreeMajor(groups[i], cs),
+    );
+  }
+
+  Widget _buildTreeMajor(_KnowledgeMajorGroup g, ColorScheme cs) {
+    final catColor = _getCategoryColor(g.subs.first.entries.first.category, cs);
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        tilePadding: const EdgeInsets.symmetric(horizontal: 8),
+        leading: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: catColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(child: Text(g.major.emoji, style: const TextStyle(fontSize: 18))),
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(g.major.label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: catColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text('${g.count}', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: catColor)),
+            ),
+          ],
+        ),
+        children: g.subs.map((s) => _buildTreeSub(s, cs)).toList(),
+      ),
+    );
+  }
+
+  Widget _buildTreeSub(_KnowledgeSubGroup s, ColorScheme cs) {
+    return ExpansionTile(
+      initiallyExpanded: false,
+      tilePadding: const EdgeInsets.only(left: 20, right: 8),
+      leading: Icon(Icons.folder_outlined, size: 18, color: cs.onSurfaceVariant.withValues(alpha: 0.7)),
+      title: Text(s.category, style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant)),
+      children: s.entries.map((e) => _buildTreeLeaf(e, cs)).toList(),
+    );
+  }
+
+  Widget _buildTreeLeaf(SocialKnowledgeEntry e, ColorScheme cs) {
+    final catColor = _getCategoryColor(e.category, cs);
+    return ListTile(
+      contentPadding: const EdgeInsets.only(left: 44, right: 12),
+      leading: Icon(_getCategoryIcon(e.category), size: 18, color: catColor),
+      title: Text(e.title, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w500)),
+      subtitle: e.tags.isNotEmpty
+          ? Text('#${e.tags.first}', style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant.withValues(alpha: 0.7)))
+          : null,
+      trailing: e.targetAudience != TargetAudience.all
+          ? _audienceBadge(e.targetAudience, cs)
+          : Icon(Icons.chevron_right_rounded, size: 18, color: cs.onSurfaceVariant.withValues(alpha: 0.5)),
+      onTap: () => _jumpToDetail(e),
+    );
+  }
+
+  // ---------------------- 知识导图视图 ----------------------
+  Widget _buildMindMap(ColorScheme cs) {
+    final groups = _hierarchy;
+    if (groups.isEmpty) return _emptyState(cs);
+    final total = _filteredEntries.length;
+    return ListView(
+      padding: const EdgeInsets.all(12),
+      children: [
+        Center(child: _mindCenterNode(total, cs)),
+        const SizedBox(height: 6),
+        ...groups.map((g) => _buildMindMajorBranch(g, cs)),
+      ],
+    );
+  }
+
+  Widget _mindCenterNode(int total, ColorScheme cs) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [cs.primary, cs.primary.withValues(alpha: 0.85)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(color: cs.primary.withValues(alpha: 0.25), blurRadius: 8, offset: const Offset(0, 3)),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('社交知识词典', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: cs.onPrimary)),
+          const SizedBox(height: 2),
+          Text('$total 个知识点', style: TextStyle(fontSize: 11, color: cs.onPrimary.withValues(alpha: 0.85))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMindMajorBranch(_KnowledgeMajorGroup g, ColorScheme cs) {
+    final catColor = _getCategoryColor(g.subs.first.entries.first.category, cs);
+    return Container(
+      margin: const EdgeInsets.only(top: 4, left: 6, right: 6),
+      decoration: BoxDecoration(
+        border: Border(left: BorderSide(color: catColor.withValues(alpha: 0.3), width: 2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 连接桩：横线 + 圆点
+          Column(
+            children: [
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(width: 14, height: 2, color: catColor.withValues(alpha: 0.3)),
+                  Container(width: 9, height: 9, decoration: BoxDecoration(shape: BoxShape.circle, color: catColor)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _mindMajorHeader(g, catColor, cs),
+                const SizedBox(height: 8),
+                ...g.subs.map((s) => _mindSubBlock(s, cs)),
+                const SizedBox(height: 14),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _mindMajorHeader(_KnowledgeMajorGroup g, Color catColor, ColorScheme cs) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: catColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: catColor.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Text(g.major.emoji, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 8),
+          Expanded(child: Text(g.major.label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: catColor))),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(color: catColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
+            child: Text('${g.count}', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: catColor)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _mindSubBlock(_KnowledgeSubGroup s, ColorScheme cs) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 2, bottom: 5),
+            child: Row(
+              children: [
+                Container(width: 5, height: 5, decoration: BoxDecoration(shape: BoxShape.circle, color: cs.onSurfaceVariant.withValues(alpha: 0.5))),
+                const SizedBox(width: 6),
+                Text(s.category, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: cs.onSurfaceVariant)),
+              ],
+            ),
+          ),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: s.entries.map((e) => _mindEntryChip(e, cs)).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _mindEntryChip(SocialKnowledgeEntry e, ColorScheme cs) {
+    final catColor = _getCategoryColor(e.category, cs);
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        onTap: () => _jumpToDetail(e),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: catColor.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(_getCategoryIcon(e.category), size: 12, color: catColor),
+              const SizedBox(width: 4),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 130),
+                child: Text(
+                  e.title,
+                  style: TextStyle(fontSize: 11.5, color: cs.onSurface),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (e.targetAudience != TargetAudience.all) ...[
+                const SizedBox(width: 3),
+                _audienceBadge(e.targetAudience, cs),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------------- 跳转执行 ----------------------
+  void _jumpToDetail(SocialKnowledgeEntry entry) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => KnowledgeDetailPage(entry: entry)),
+    );
   }
 }
