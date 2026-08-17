@@ -1,7 +1,7 @@
 name: relation_app_teaching
 description: "社交技能分级教学与模拟对话练习 App"
 publish_to: 'none'
-version: 1.0.28+28
+version: 1.0.29+29
 
 environment:
   # 放宽 SDK 约束：同时支持较新的 Dart 3.12+，也允许老一点的 3.5+（CI / 本地各版本都能跑）
@@ -28,6 +28,8 @@ dependencies:
   dio: ^5.7.0
   # 调用系统安装器安装下载好的 APK（Android 8+ 自动处理未知来源权限）
   open_filex: ^4.5.0
+  # “安装未知应用”特殊权限检查/跳转系统设置页
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
