@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/theme/app_style_system.dart';
+import 'core/utils/app_update_service.dart';
 import 'core/utils/app_version_info.dart';
 import 'core/utils/pdf_exporter.dart';
 import 'core/widgets/update_dialog.dart';
@@ -43,19 +44,76 @@ class TeachingApp extends StatelessWidget {
   }
 }
 
-class TeachingHomePage extends StatelessWidget {
+class TeachingHomePage extends StatefulWidget {
   const TeachingHomePage({super.key});
 
   @override
+  State<TeachingHomePage> createState() => _TeachingHomePageState();
+}
+
+class _TeachingHomePageState extends State<TeachingHomePage> {
+  /// 自动检查更新结果：非 null 表示有新版本可用
+  GithubReleaseInfo? _latestRelease;
+
+  @override
+  void initState() {
+    super.initState();
+    _autoCheckUpdate();
+  }
+
+  /// APP 首次进入时静默检查更新
+  ///
+  /// 仅在标题栏显示更新标记，不弹出任何弹窗 / SnackBar / Toast。
+  /// 用户点击更新按钮仍可手动唤起更新对话框。
+  Future<void> _autoCheckUpdate() async {
+    final outcome = await AppUpdateService.checkForUpdate();
+    if (!mounted) return;
+    if (outcome.result == UpdateCheckResult.hasUpdate) {
+      setState(() => _latestRelease = outcome.releaseInfo);
+    } else {
+      setState(() => _latestRelease = null);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final hasUpdate = _latestRelease != null;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('社交教学关卡'),
+        title: hasUpdate
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('社交教学关卡'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.cloud_download_outlined,
+                          size: 12,
+                          color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 4),
+                      Text(
+                        '新版本 v${_latestRelease!.version} 可用，点击右侧按钮更新',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            : const Text('社交教学关卡'),
         centerTitle: true,
         actions: [
           IconButton(
-            tooltip: '检查更新',
-            icon: const Icon(Icons.system_update_rounded),
+            tooltip: hasUpdate ? '发现新版本 v${_latestRelease!.version}' : '检查更新',
+            icon: Badge(
+              isLabelVisible: hasUpdate,
+              label: const Text('!', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
+              child: const Icon(Icons.system_update_rounded),
+            ),
             onPressed: () => UpdateDialog.show(context),
           ),
           IconButton(
